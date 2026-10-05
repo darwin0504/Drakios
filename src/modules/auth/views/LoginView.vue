@@ -12,17 +12,58 @@ const authStore = useAuthStore()
 const appName = 'Drakios'
 const viewName = 'Inicio de sesión'
 
-const correo = ref('darwinbedoya05@mail.com')
-const password = ref('Password123')
+const correo = ref('')
+const password = ref('')
 const loading = ref(false)
 
-const login = async () => {
-  if (!correo.value || !password.value) {
+const validateForm = () => {
+  if (!correo.value) {
     Swal.fire({
       icon: 'warning',
-      title: 'Campos requeridos',
-      text: 'Ingresa tu correo y contraseña.',
+      title: 'Correo requerido',
+      text: 'Ingresa tu correo electrónico.',
     })
+
+    return false
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+  if (!emailRegex.test(correo.value)) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Correo inválido',
+      text: 'Ingresa un correo electrónico válido.',
+    })
+
+    return false
+  }
+
+  if (!password.value) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Contraseña requerida',
+      text: 'Ingresa tu contraseña.',
+    })
+
+    return false
+  }
+
+  if (password.value.length < 8) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Contraseña inválida',
+      text: 'La contraseña debe tener al menos 8 caracteres.',
+    })
+
+    return false
+  }
+
+  return true
+}
+
+const login = async () => {
+  if (!validateForm()) {
     return
   }
 
@@ -48,7 +89,7 @@ const login = async () => {
 
     router.push('/products')
   } catch (error) {
-    Swal.fire({
+    await Swal.fire({
       icon: 'error',
       title: 'Error al iniciar sesión',
       text: getErrorMessage(error),
@@ -84,7 +125,7 @@ const login = async () => {
               </h1>
 
               <p class="text-white-50 mb-5">
-                Accede al panel para listar, crear, editar y eliminar productos conectados a tu API REST.
+                Accede al panel para listar, crear, editar y eliminar productos.
               </p>
 
               <div class="d-grid gap-4">
@@ -150,7 +191,7 @@ const login = async () => {
                     Contraseña
                   </label>
 
-                  <input type="password" id="password" v-model.trim="password" class="form-control premium-input"
+                  <input type="password" id="password" v-model="password" class="form-control premium-input"
                     placeholder="Ingresa tu contraseña" autocomplete="current-password" />
                 </div>
 

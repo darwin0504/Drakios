@@ -52,14 +52,6 @@ const logout = async () => {
   } finally {
     authStore.clearSession()
 
-    await Swal.fire({
-      icon: 'success',
-      title: 'Sesión cerrada',
-      text: 'Has cerrado sesión correctamente.',
-      timer: 1200,
-      showConfirmButton: false,
-    })
-
     router.push('/login')
   }
 }
