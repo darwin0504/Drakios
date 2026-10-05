@@ -13,7 +13,7 @@ const appName = 'Drakios'
 const viewName = 'Inicio de sesión'
 
 const correo = ref('darwinbedoya05@mail.com')
-const password = ref('123456789')
+const password = ref('Password123')
 const loading = ref(false)
 
 const login = async () => {

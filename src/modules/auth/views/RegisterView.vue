@@ -13,6 +13,7 @@ const viewName = 'Registro de usuario'
 const nombre = ref('')
 const correo = ref('')
 const password = ref('')
+const passwordConfirmation = ref('')
 const direccion = ref('')
 
 const loading = ref(false)
@@ -65,11 +66,38 @@ const validateForm = () => {
     return false
   }
 
-  if (password.value.trim().length < 6) {
+  if (password.value.trim().length < 8) {
     Swal.fire({
       icon: 'warning',
       title: 'Contraseña inválida',
-      text: 'La contraseña debe tener mínimo 6 caracteres.',
+      text: 'La contraseña debe tener mínimo 8 caracteres.',
+    })
+    return false
+  }
+
+  if (!/[0-9]/.test(password.value)) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Contraseña inválida',
+      text: 'La contraseña debe contener al menos un número.',
+    })
+    return false
+  }
+
+  if (!passwordConfirmation.value) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Campo requerido',
+      text: 'Confirma tu contraseña.',
+    })
+    return false
+  }
+
+  if (password.value !== passwordConfirmation.value) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Contraseñas no coinciden',
+      text: 'Las contraseñas ingresadas no coinciden.',
     })
     return false
   }
@@ -86,7 +114,8 @@ const registerUser = async () => {
     const data = {
       nombre: nombre.value.trim(),
       correo: correo.value.trim(),
-      password: password.value.trim(),
+      password: password.value,
+      passwordConfirmation: passwordConfirmation.value,
     }
 
     if (direccion.value.trim()) {
@@ -219,7 +248,7 @@ const goToLogin = () => {
                   </label>
 
                   <input type="text" id="nombre" v-model.trim="nombre" class="form-control premium-input"
-                    placeholder="Darwin Bedoya" autocomplete="name" />
+                    placeholder="Darwin Bedoya" autocomplete="name" required />
                 </div>
 
                 <div class="mb-3">
@@ -228,7 +257,7 @@ const goToLogin = () => {
                   </label>
 
                   <input type="email" id="correo" v-model.trim="correo" class="form-control premium-input"
-                    placeholder="correo@demo.com" autocomplete="email" />
+                    placeholder="correo@demo.com" autocomplete="email" required />
                 </div>
 
                 <div class="mb-3">
@@ -237,7 +266,17 @@ const goToLogin = () => {
                   </label>
 
                   <input type="password" id="password" v-model.trim="password" class="form-control premium-input"
-                    placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
+                    placeholder="Mínimo 8 caracteres" autocomplete="new-password" required />
+                </div>
+
+                <div class="mb-3">
+                  <label for="passwordConfirmation" class="form-label fw-semibold">
+                    Confirmar contraseña
+                  </label>
+
+                  <input type="password" id="passwordConfirmation" v-model="passwordConfirmation"
+                    class="form-control premium-input" placeholder="Repite tu contraseña" autocomplete="new-password"
+                    required />
                 </div>
 
                 <div class="mb-3">
