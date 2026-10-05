@@ -41,12 +41,14 @@ const formatCurrency = (value) => {
   const numberValue = Number(value)
 
   if (Number.isNaN(numberValue)) {
-    return 'S/ 0.00'
+    return 'COP/ 0.00'
   }
 
-  return new Intl.NumberFormat('es-PE', {
+  return new Intl.NumberFormat('es-CO', {
     style: 'currency',
-    currency: 'PEN',
+    currency: 'COP',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(numberValue)
 }
 

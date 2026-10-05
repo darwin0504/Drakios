@@ -70,7 +70,7 @@ const logout = async () => {
     <div class="container">
       <RouterLink class="navbar-brand-premium" to="/products">
         <div class="navbar-logo">
-          AS
+          DK
         </div>
 
         <div>

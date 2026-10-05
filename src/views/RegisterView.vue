@@ -128,7 +128,7 @@ const goToLogin = () => {
           <div class="col-md-6 d-none d-md-block">
             <section class="auth-brand-panel register-brand-panel h-100">
               <div class="d-flex align-items-center gap-3 mb-5">
-                <div class="app-logo">AS</div>
+                <div class="app-logo">DK</div>
 
                 <div>
                   <h3 class="mb-0 fw-bold">{{ appName }}</h3>
