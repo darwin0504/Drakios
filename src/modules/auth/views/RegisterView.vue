@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
-import { authService } from '@/services/authService'
+import { authService } from '@/modules/auth/services/authService'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
 const router = useRouter()

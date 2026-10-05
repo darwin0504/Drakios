@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import Swal from 'sweetalert2'
-import { authService } from '@/services/authService'
-import { useAuthStore } from '@/stores/authStore'
+import { authService } from '@/modules/auth/services/authService'
+import { useAuthStore } from '@/modules/auth/stores/authStore'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
 const router = useRouter()

@@ -2,8 +2,8 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
-import { useAuthStore } from '@/stores/authStore'
-import { authService } from '@/services/authService'
+import { useAuthStore } from '@/modules/auth/stores/authStore'
+import { authService } from '@/modules/auth/services/authService'
 
 const router = useRouter()
 const authStore = useAuthStore()

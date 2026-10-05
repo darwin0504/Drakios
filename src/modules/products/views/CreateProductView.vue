@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 import AppNavbar from '@/components/AppNavbar.vue'
-import { productService } from '@/services/productService'
+import { productService } from '@/modules/products/services/productService'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
 const router = useRouter()

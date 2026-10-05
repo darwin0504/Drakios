@@ -5,7 +5,7 @@ import $ from 'jquery'
 import 'datatables.net-bs5'
 import 'datatables.net-responsive-bs5'
 import AppNavbar from '@/components/AppNavbar.vue'
-import { productService } from '@/services/productService'
+import { productService } from '@/modules/products/services/productService'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
 const appName = 'Drakios'
