@@ -20,21 +20,21 @@ const totalProducts = computed(() => products.value.length)
 
 const totalStock = computed(() => {
   return products.value.reduce((total, product) => {
-    return total + Number(product.cantidad || 0)
+    return total + Number(product.quantity || 0)
   }, 0)
 })
 
 const totalInventoryValue = computed(() => {
   return products.value.reduce((total, product) => {
-    const price = Number(product.precio || 0)
-    const quantity = Number(product.cantidad || 0)
+    const price = Number(product.price || 0)
+    const quantity = Number(product.quantity || 0)
 
     return total + price * quantity
   }, 0)
 })
 
 const lowStockProducts = computed(() => {
-  return products.value.filter((product) => Number(product.cantidad || 0) <= 5).length
+  return products.value.filter((product) => Number(product.quantity || 0) <= 5).length
 })
 
 const formatCurrency = (value) => {
@@ -115,7 +115,7 @@ const confirmDelete = async (product) => {
   const result = await Swal.fire({
     icon: 'warning',
     title: 'Eliminar producto',
-    text: `¿Seguro que deseas eliminar el producto "${product.nombre}"?`,
+    text: `¿Seguro que deseas eliminar el producto "${product.name}"?`,
     showCancelButton: true,
     confirmButtonText: 'Sí, eliminar',
     cancelButtonText: 'Cancelar',
@@ -302,20 +302,20 @@ onBeforeUnmount(() => {
                   </td>
 
                   <td class="product-name-cell">
-                    {{ product.nombre }}
+                    {{ product.name }}
                   </td>
 
                   <td class="fw-semibold">
-                    {{ formatCurrency(product.precio) }}
+                    {{ formatCurrency(product.price) }}
                   </td>
 
                   <td class="product-description-cell">
-                    {{ product.descripcion || 'Sin descripción' }}
+                    {{ product.description || 'Sin descripción' }}
                   </td>
 
                   <td>
-                    <span class="stock-badge" :class="Number(product.cantidad) <= 5 ? 'stock-low' : 'stock-ok'">
-                      {{ product.cantidad }}
+                    <span class="stock-badge" :class="Number(product.quantity) <= 5 ? 'stock-low' : 'stock-ok'">
+                      {{ product.quantity }}
                     </span>
                   </td>
 

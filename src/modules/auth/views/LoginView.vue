@@ -12,12 +12,12 @@ const authStore = useAuthStore()
 const appName = 'Drakios'
 const viewName = 'Inicio de sesión'
 
-const correo = ref('')
+const email = ref('')
 const password = ref('')
 const loading = ref(false)
 
 const validateForm = () => {
-  if (!correo.value) {
+  if (!email.value) {
     Swal.fire({
       icon: 'warning',
       title: 'Correo requerido',
@@ -29,7 +29,7 @@ const validateForm = () => {
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-  if (!emailRegex.test(correo.value)) {
+  if (!emailRegex.test(email.value)) {
     Swal.fire({
       icon: 'warning',
       title: 'Correo inválido',
@@ -71,7 +71,7 @@ const login = async () => {
 
   try {
     const response = await authService.login({
-      correo: correo.value,
+      email: email.value,
       password: password.value,
     })
 
@@ -178,11 +178,11 @@ const login = async () => {
 
               <form @submit.prevent="login">
                 <div class="mb-3">
-                  <label for="correo" class="form-label fw-semibold">
+                  <label for="email" class="form-label fw-semibold">
                     Correo electrónico
                   </label>
 
-                  <input type="email" id="correo" v-model.trim="correo" class="form-control premium-input"
+                  <input type="email" id="email" v-model.trim="email" class="form-control premium-input"
                     placeholder="admin@drakios.com" autocomplete="email" />
                 </div>
 

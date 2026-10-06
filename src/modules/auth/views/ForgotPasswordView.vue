@@ -49,7 +49,7 @@ const submitRequest = async () => {
 
     try {
         const response = await authService.forgotPassword({
-            correo: email.value.trim(),
+            email: email.value.trim(),
         })
 
         await Swal.fire({

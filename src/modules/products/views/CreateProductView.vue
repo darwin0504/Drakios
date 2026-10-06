@@ -11,19 +11,19 @@ const router = useRouter()
 const appName = 'Drakios'
 const viewName = 'Crear producto'
 
-const nombre = ref('')
-const precio = ref('')
-const descripcion = ref('')
-const cantidad = ref('')
+const name = ref('')
+const price = ref('')
+const description = ref('')
+const quantity = ref('')
 
 const loading = ref(false)
 
 const previewName = computed(() => {
-  return nombre.value.trim() || 'Nuevo producto'
+  return name.value.trim() || 'Nuevo producto'
 })
 
 const previewPrice = computed(() => {
-  const value = Number(precio.value)
+  const value = Number(price.value)
 
   if (Number.isNaN(value)) {
     return 0
@@ -33,7 +33,7 @@ const previewPrice = computed(() => {
 })
 
 const previewQuantity = computed(() => {
-  const value = Number(cantidad.value)
+  const value = Number(quantity.value)
 
   if (Number.isNaN(value)) {
     return 0
@@ -62,7 +62,7 @@ const formatCurrency = (value) => {
 }
 
 const validateForm = () => {
-  if (!nombre.value.trim()) {
+  if (!name.value.trim()) {
     Swal.fire({
       icon: 'warning',
       title: 'Campo requerido',
@@ -71,7 +71,7 @@ const validateForm = () => {
     return false
   }
 
-  if (nombre.value.trim().length < 2) {
+  if (name.value.trim().length < 2) {
     Swal.fire({
       icon: 'warning',
       title: 'Nombre inválido',
@@ -80,7 +80,7 @@ const validateForm = () => {
     return false
   }
 
-  if (precio.value === '' || Number(precio.value) < 0) {
+  if (price.value === '' || Number(price.value) < 0) {
     Swal.fire({
       icon: 'warning',
       title: 'Precio inválido',
@@ -89,7 +89,7 @@ const validateForm = () => {
     return false
   }
 
-  if (cantidad.value === '' || Number(cantidad.value) < 0) {
+  if (quantity.value === '' || Number(quantity.value) < 0) {
     Swal.fire({
       icon: 'warning',
       title: 'Cantidad inválida',
@@ -98,7 +98,7 @@ const validateForm = () => {
     return false
   }
 
-  if (!Number.isInteger(Number(cantidad.value))) {
+  if (!Number.isInteger(Number(quantity.value))) {
     Swal.fire({
       icon: 'warning',
       title: 'Cantidad inválida',
@@ -117,10 +117,10 @@ const saveProduct = async () => {
 
   try {
     const data = {
-      nombre: nombre.value.trim(),
-      precio: Number(precio.value),
-      descripcion: descripcion.value.trim() || null,
-      cantidad: Number(cantidad.value),
+      name: name.value.trim(),
+      price: Number(price.value),
+      description: description.value.trim() || null,
+      quantity: Number(quantity.value),
     }
 
     await productService.create(data)
@@ -201,39 +201,39 @@ const goBack = () => {
               <form @submit.prevent="saveProduct">
                 <div class="row">
                   <div class="col-md-6 mb-3">
-                    <label for="nombre" class="form-label fw-semibold">
+                    <label for="name" class="form-label fw-semibold">
                       Nombre del producto
                     </label>
 
-                    <input type="text" id="nombre" v-model="nombre" class="form-control premium-input"
+                    <input type="text" id="name" v-model="name" class="form-control premium-input"
                       placeholder="Mouse inalámbrico" />
                   </div>
 
                   <div class="col-md-3 mb-3">
-                    <label for="precio" class="form-label fw-semibold">
+                    <label for="price" class="form-label fw-semibold">
                       Precio
                     </label>
 
-                    <input type="number" id="precio" v-model="precio" class="form-control premium-input" min="0"
+                    <input type="number" id="price" v-model="price" class="form-control premium-input" min="0"
                       step="0.01" placeholder="59.90" />
                   </div>
 
                   <div class="col-md-3 mb-3">
-                    <label for="cantidad" class="form-label fw-semibold">
+                    <label for="quantity" class="form-label fw-semibold">
                       Cantidad
                     </label>
 
-                    <input type="number" id="cantidad" v-model="cantidad" class="form-control premium-input" min="0"
+                    <input type="number" id="quantity" v-model="quantity" class="form-control premium-input" min="0"
                       step="1" placeholder="20" />
                   </div>
 
                   <div class="col-md-12 mb-3">
-                    <label for="descripcion" class="form-label fw-semibold">
+                    <label for="description" class="form-label fw-semibold">
                       Descripción
                       <small class="text-muted fw-normal">(opcional)</small>
                     </label>
 
-                    <textarea id="descripcion" v-model="descripcion" class="form-control premium-input" rows="5"
+                    <textarea id="description" v-model="description" class="form-control premium-input" rows="5"
                       placeholder="Descripción opcional del producto"></textarea>
                   </div>
                 </div>

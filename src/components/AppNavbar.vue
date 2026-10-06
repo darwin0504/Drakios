@@ -11,11 +11,11 @@ const authStore = useAuthStore()
 const appName = 'Drakios'
 
 const userName = computed(() => {
-  return authStore.user?.nombre || 'Usuario'
+  return authStore.user?.name || 'Usuario'
 })
 
 const userEmail = computed(() => {
-  return authStore.user?.correo || ''
+  return authStore.user?.email || ''
 })
 
 const userInitials = computed(() => {

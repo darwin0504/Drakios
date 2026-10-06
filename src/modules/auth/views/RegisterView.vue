@@ -10,8 +10,8 @@ const router = useRouter()
 const appName = 'Drakios'
 const viewName = 'Registro de usuario'
 
-const nombre = ref('')
-const correo = ref('')
+const name = ref('')
+const email = ref('')
 const password = ref('')
 const passwordConfirmation = ref('')
 const direccion = ref('')
@@ -19,7 +19,7 @@ const direccion = ref('')
 const loading = ref(false)
 
 const validateForm = () => {
-  if (!nombre.value.trim()) {
+  if (!name.value.trim()) {
     Swal.fire({
       icon: 'warning',
       title: 'Campo requerido',
@@ -28,7 +28,7 @@ const validateForm = () => {
     return false
   }
 
-  if (nombre.value.trim().length < 3) {
+  if (name.value.trim().length < 3) {
     Swal.fire({
       icon: 'warning',
       title: 'Nombre inválido',
@@ -37,7 +37,7 @@ const validateForm = () => {
     return false
   }
 
-  if (!correo.value.trim()) {
+  if (!email.value.trim()) {
     Swal.fire({
       icon: 'warning',
       title: 'Campo requerido',
@@ -48,7 +48,7 @@ const validateForm = () => {
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-  if (!emailRegex.test(correo.value.trim())) {
+  if (!emailRegex.test(email.value.trim())) {
     Swal.fire({
       icon: 'warning',
       title: 'Correo inválido',
@@ -112,8 +112,8 @@ const registerUser = async () => {
 
   try {
     const data = {
-      nombre: nombre.value.trim(),
-      correo: correo.value.trim(),
+      name: name.value.trim(),
+      email: email.value.trim(),
       password: password.value,
       passwordConfirmation: passwordConfirmation.value,
     }
@@ -243,20 +243,20 @@ const goToLogin = () => {
 
               <form @submit.prevent="registerUser">
                 <div class="mb-3">
-                  <label for="nombre" class="form-label fw-semibold">
+                  <label for="name" class="form-label fw-semibold">
                     Nombre completo
                   </label>
 
-                  <input type="text" id="nombre" v-model.trim="nombre" class="form-control premium-input"
+                  <input type="text" id="name" v-model.trim="name" class="form-control premium-input"
                     placeholder="Darwin Bedoya" autocomplete="name" required />
                 </div>
 
                 <div class="mb-3">
-                  <label for="correo" class="form-label fw-semibold">
+                  <label for="email" class="form-label fw-semibold">
                     Correo electrónico
                   </label>
 
-                  <input type="email" id="correo" v-model.trim="correo" class="form-control premium-input"
+                  <input type="email" id="email" v-model.trim="email" class="form-control premium-input"
                     placeholder="correo@demo.com" autocomplete="email" required />
                 </div>
 
