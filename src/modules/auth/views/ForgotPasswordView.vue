@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 
-import { authService } from '../services/authService'
+import { authService } from '@/modules/auth/services/authService'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
 const router = useRouter()
@@ -11,14 +11,37 @@ const router = useRouter()
 const email = ref('')
 const loading = ref(false)
 
-const SubmitRequest = async () => {
-    if (!email.value.trim()) {
-        await Swal.fire({
+const validateForm = () => {
+    const emailValue = email.value.trim()
+
+    if (!emailValue) {
+        Swal.fire({
             icon: 'warning',
             title: 'Correo requerido',
             text: 'Ingresa tu correo electrónico.',
         })
 
+        return false
+    }
+
+    const emailRegex =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    if (!emailRegex.test(emailValue)) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Correo inválido',
+            text: 'Ingresa un correo electrónico válido.',
+        })
+
+        return false
+    }
+
+    return true
+}
+
+const submitRequest = async () => {
+    if (!validateForm()) {
         return
     }
 
@@ -26,7 +49,7 @@ const SubmitRequest = async () => {
 
     try {
         const response = await authService.forgotPassword({
-            email: email.value.trim(),
+            correo: email.value.trim(),
         })
 
         await Swal.fire({
@@ -56,9 +79,11 @@ const goToLogin = () => {
 </script>
 
 <template>
-    <div class="auth-page d-flex align-items-center justify-content-center">
+    <main class="auth-page d-flex align-items-center justify-content-center">
         <div class="card-dialog">
             <div class="forgot-password-header">
+                <div class="app-logo">DK</div>
+
                 <h2 class="auth-title mb-2">Recuperar contraseña</h2>
 
                 <p class="auth-subtitle mb-0">
@@ -67,12 +92,12 @@ const goToLogin = () => {
                 </p>
             </div>
 
-            <form @submit.prevent="SubmitRequest">
+            <form @submit.prevent="submitRequest">
                 <div class="mb-3">
-                    <label for="correo" class="form-label fw-semibold">Correo electrónico</label>
+                    <label for="email" class="form-label fw-semibold">Correo electrónico</label>
 
-                    <input id="correo" v-model.trim="email" type="email" class="form-control premium-input"
-                        autocomplete="email" placeholder="correo@ejemplo.com" :disabled="loading" required />
+                    <input id="email" v-model.trim="email" type="email" class="form-control premium-input"
+                        placeholder="correo@ejemplo.com" autocomplete="email" :disabled="loading" />
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-premium w-100" :disabled="loading">
@@ -90,13 +115,19 @@ const goToLogin = () => {
                 </button>
             </div>
         </div>
-    </div>
+    </main>
 </template>
 
 <style scoped>
 .forgot-password-header {
     margin-bottom: 24px;
     text-align: center;
+}
+
+.forgot-password-header .app-logo {
+    margin: 0 auto 20px;
+    background: #0d6efd;
+    color: #ffffff;
 }
 
 @media (max-width: 480px) {

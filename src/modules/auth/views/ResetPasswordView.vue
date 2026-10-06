@@ -172,11 +172,6 @@ const requestNewLink = () => {
             </form>
 
             <div class="text-center mt-3">
-                <button type="button" class="btn btn-link fw-semibold text-decoration-none p-0" :disabled="loading"
-                    @click="goToLogin">
-                    Volver al inicio de sesión
-                </button>
-
                 <button v-if="!token" type="button" class="btn btn-link fw-semibold text-decoration-none p-0"
                     @click="requestNewLink">
                     Solicitar un nuevo enlace
@@ -188,7 +183,7 @@ const requestNewLink = () => {
 
 <style scoped>
 .reset-password-header {
-    margin-bottom: 28px;
+    margin-bottom: 24px;
     text-align: center;
 }
 
