@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Offcanvas } from 'bootstrap'
 import Swal from 'sweetalert2'
@@ -33,39 +33,25 @@ const userInitials = computed(() => {
   return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
 })
 
-const closeAccountOffcanvas = () => {
-  const element = document.getElementById(
-    'userAccountOffcanvas',
-  )
+const navigateFromAccount = async (path) => {
+  await nextTick()
 
-  if (!element) {
-    return
-  }
-
-  const instance =
-    Offcanvas.getInstance(element)
-
-  instance?.hide()
+  router.push(path)
 }
 
 const goToProfile = () => {
-  closeAccountOffcanvas()
-  router.push('/profile')
+  navigateFromAccount('/profile')
 }
 
 const goToChangePassword = () => {
-  closeAccountOffcanvas()
-  router.push('/change-password')
+  navigateFromAccount('/change-password')
 }
 
 const goToSettings = () => {
-  closeAccountOffcanvas()
-  router.push('/settings')
+  navigateFromAccount('/settings')
 }
 
 const logout = async () => {
-  closeAccountOffcanvas()
-
   const result = await Swal.fire({
     icon: 'question',
     title: 'Cerrar sesión',
@@ -110,7 +96,7 @@ const logout = async () => {
         </div>
       </RouterLink>
 
-      <!-- Desktop / mobile navigation toggle -->
+      <!-- Main navigation toggle -->
       <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
         data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Mostrar menú">
         <span class="navbar-toggler-icon"></span>
@@ -121,20 +107,21 @@ const logout = async () => {
         <ul class="navbar-nav mx-lg-auto mb-2 mb-lg-0 gap-lg-2 mt-3 mt-lg-0">
           <li class="nav-item">
             <RouterLink class="nav-link premium-nav-link" to="/products">
+              <i class="bi bi-box-seam me-1"></i>
               Productos
             </RouterLink>
           </li>
 
           <li class="nav-item">
             <RouterLink class="nav-link premium-nav-link" to="/products/create">
+              <i class="bi bi-plus-circle me-1"></i>
               Nuevo producto
             </RouterLink>
           </li>
         </ul>
       </div>
 
-      <!-- Account trigger this button is intentionally OUTSIDE
-           the navbar collapse so it is always accessible on mobile. -->
+      <!-- Account trigger -->
       <button type="button" class="account-trigger" data-bs-toggle="offcanvas" data-bs-target="#userAccountOffcanvas"
         aria-controls="userAccountOffcanvas" aria-label="Abrir menú de cuenta">
         <span class="account-trigger-avatar">
@@ -152,17 +139,15 @@ const logout = async () => {
         </span>
 
         <span class="account-trigger-chevron">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M6 9l6 6 6-6" />
-          </svg>
+          <i class="bi bi-chevron-down"></i>
         </span>
       </button>
     </div>
   </nav>
 
   <!-- User account offcanvas -->
-  <div id="userAccountOffcanvas" class="offcanvas offcanvas-end user-account-offcanvas" tabindex="-1"
-    aria-labelledby="userAccountOffcanvasLabel">
+  <div id="userAccountOffcanvas" ref="accountOffcanvas" class="offcanvas offcanvas-end user-account-offcanvas"
+    tabindex="-1" aria-labelledby="userAccountOffcanvasLabel">
     <!-- Header -->
     <div class="offcanvas-header account-offcanvas-header">
       <div>
@@ -180,10 +165,7 @@ const logout = async () => {
       </div>
 
       <button type="button" class="account-close-button" data-bs-dismiss="offcanvas" aria-label="Cerrar">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 6l12 12" />
-          <path d="M18 6L6 18" />
-        </svg>
+        <i class="bi bi-x-lg"></i>
       </button>
     </div>
 
@@ -221,10 +203,7 @@ const logout = async () => {
         <!-- Profile -->
         <button type="button" class="account-menu-item" @click="goToProfile">
           <span class="account-menu-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="8" r="3.5" />
-              <path d="M5 19c.7-3.2 3.1-5 7-5s6.3 1.8 7 5" />
-            </svg>
+            <i class="bi bi-person"></i>
           </span>
 
           <span class="account-menu-content">
@@ -238,20 +217,14 @@ const logout = async () => {
           </span>
 
           <span class="account-menu-arrow">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
+            <i class="bi bi-chevron-right"></i>
           </span>
         </button>
 
         <!-- Change password -->
         <button type="button" class="account-menu-item" @click="goToChangePassword">
           <span class="account-menu-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="5" y="10" width="14" height="10" rx="2" />
-              <path d="M8 10V7a4 4 0 018 0v3" />
-              <circle cx="12" cy="15" r="1.2" />
-            </svg>
+            <i class="bi bi-shield-lock"></i>
           </span>
 
           <span class="account-menu-content">
@@ -265,20 +238,14 @@ const logout = async () => {
           </span>
 
           <span class="account-menu-arrow">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
+            <i class="bi bi-chevron-right"></i>
           </span>
         </button>
 
         <!-- Settings -->
         <button type="button" class="account-menu-item" @click="goToSettings">
           <span class="account-menu-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z" />
-              <path
-                d="M19.4 15a1.8 1.8 0 00.35 1.98l.05.05-1.8 1.8-.05-.05a1.8 1.8 0 00-1.98-.35 1.8 1.8 0 00-1.08 1.65V20h-2.55v-.07a1.8 1.8 0 00-1.08-1.65 1.8 1.8 0 00-1.98.35l-.05.05-1.8-1.8.05-.05A1.8 1.8 0 007.85 15a1.8 1.8 0 00-1.65-1.08H6v-2.55h.2A1.8 1.8 0 007.85 10a1.8 1.8 0 00-.35-1.98l-.05-.05 1.8-1.8.05.05a1.8 1.8 0 001.98.35A1.8 1.8 0 0012.36 4.9V4h2.55v.2a1.8 1.8 0 001.08 1.65 1.8 1.8 0 001.98-.35l.05-.05 1.8 1.8-.05.05a1.8 1.8 0 00-.35 1.98 1.8 1.8 0 001.65 1.08H22v2.55h-.2A1.8 1.8 0 0019.4 15z" />
-            </svg>
+            <i class="bi bi-gear"></i>
           </span>
 
           <span class="account-menu-content">
@@ -292,9 +259,7 @@ const logout = async () => {
           </span>
 
           <span class="account-menu-arrow">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
+            <i class="bi bi-chevron-right"></i>
           </span>
         </button>
       </section>
@@ -307,10 +272,7 @@ const logout = async () => {
 
         <button type="button" class="account-menu-item account-menu-item-disabled" disabled>
           <span class="account-menu-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 3l7 3v5c0 4.7-2.9 8.1-7 10-4.1-1.9-7-5.3-7-10V6l7-3z" />
-              <path d="M9.5 12l1.7 1.7 3.5-3.5" />
-            </svg>
+            <i class="bi bi-shield-check"></i>
           </span>
 
           <span class="account-menu-content">
@@ -329,11 +291,7 @@ const logout = async () => {
       <div class="account-logout-wrapper">
         <button type="button" class="account-logout-button" @click="logout">
           <span class="account-logout-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M10 5H6a2 2 0 00-2 2v10a2 2 0 002 2h4" />
-              <path d="M14 8l4 4-4 4" />
-              <path d="M18 12H9" />
-            </svg>
+            <i class="bi bi-box-arrow-right"></i>
           </span>
 
           <span>
@@ -346,9 +304,7 @@ const logout = async () => {
 </template>
 
 <style scoped>
-/* =========================================
-   NAVBAR
-   ========================================= */
+/* NAVBAR */
 
 .premium-navbar {
   background: rgba(15, 23, 42, 0.97);
@@ -375,23 +331,15 @@ const logout = async () => {
   width: 42px;
   height: 42px;
   flex: 0 0 42px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 13px;
-
-  background:
-    linear-gradient(135deg,
-      var(--app-primary),
-      var(--app-primary-dark));
-
+  background: linear-gradient(135deg, var(--app-primary), var(--app-primary-dark));
   color: #ffffff;
   font-weight: 800;
 
-  box-shadow:
-    0 10px 22px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.35);
 }
 
 .navbar-brand-copy {
@@ -430,27 +378,19 @@ const logout = async () => {
   color: #dbeafe !important;
 }
 
-/* =========================================
-   ACCOUNT TRIGGER
-   ========================================= */
+/* ACCOUNT TRIGGER */
 
 .account-trigger {
   display: flex;
   align-items: center;
   gap: 10px;
-
   margin-left: 18px;
   padding: 6px 9px 6px 7px;
-
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
-
   background: rgba(255, 255, 255, 0.07);
-
   color: #ffffff;
-
   cursor: pointer;
-
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,
@@ -461,11 +401,8 @@ const logout = async () => {
 .account-trigger:hover {
   background: rgba(37, 99, 235, 0.18);
   border-color: rgba(96, 165, 250, 0.35);
-
   transform: translateY(-1px);
-
-  box-shadow:
-    0 8px 20px rgba(15, 23, 42, 0.2);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2);
 }
 
 .account-trigger:focus-visible {
@@ -477,45 +414,30 @@ const logout = async () => {
   width: 36px;
   height: 36px;
   flex: 0 0 36px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 50%;
-
-  background:
-    linear-gradient(135deg,
-      #60a5fa,
-      var(--app-primary));
-
+  background: linear-gradient(135deg, #60a5fa, var(--app-primary));
   color: #ffffff;
-
   font-size: 13px;
   font-weight: 800;
-
-  box-shadow:
-    0 6px 14px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.3);
 }
 
 .account-trigger-info {
   display: flex;
   flex-direction: column;
-
   min-width: 0;
-
   text-align: left;
 }
 
 .account-trigger-name {
   max-width: 150px;
-
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
   color: #ffffff;
-
   font-size: 13px;
   font-weight: 700;
   line-height: 1.2;
@@ -523,15 +445,11 @@ const logout = async () => {
 
 .account-trigger-email {
   max-width: 150px;
-
   margin-top: 2px;
-
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
   color: #94a3b8;
-
   font-size: 11px;
   line-height: 1.2;
 }
@@ -540,101 +458,61 @@ const logout = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: #94a3b8;
+  font-size: 14px;
 }
 
-.account-trigger-chevron svg {
-  width: 16px;
-  height: 16px;
-
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* =========================================
-   ACCOUNT OFFCANVAS
-   ========================================= */
+/* ACCOUNT OFFCANVAS */
 
 .user-account-offcanvas {
   width: 400px !important;
   max-width: 100vw;
-
-  background:
-    linear-gradient(180deg,
-      #0f172a 0%,
-      #111c35 45%,
-      #0f172a 100%);
-
+  background: linear-gradient(180deg, #0f172a 0%, #111c35 45%, #0f172a 100%);
   color: #ffffff;
-
   border-left: 1px solid rgba(255, 255, 255, 0.08);
-
-  box-shadow:
-    -20px 0 60px rgba(2, 6, 23, 0.35);
+  box-shadow: -20px 0 60px rgba(2, 6, 23, 0.35);
 }
 
-/* =========================================
-   OFFCANVAS HEADER
-   ========================================= */
+/* OFFCANVAS HEADER */
 
 .account-offcanvas-header {
   padding: 24px 22px 20px;
-
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .account-offcanvas-kicker {
   margin-bottom: 6px;
-
   color: #60a5fa;
-
   font-size: 10px;
   font-weight: 800;
-
   letter-spacing: 0.14em;
 }
 
 .account-offcanvas-title {
   margin: 0;
-
   color: #ffffff;
-
   font-size: 22px;
   font-weight: 800;
 }
 
 .account-offcanvas-subtitle {
   margin: 5px 0 0;
-
   color: #94a3b8;
-
   font-size: 13px;
 }
 
 .account-close-button {
   width: 38px;
   height: 38px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   padding: 0;
-
   border: 1px solid rgba(255, 255, 255, 0.1);
-
   border-radius: 10px;
-
   background: rgba(255, 255, 255, 0.06);
-
   color: #cbd5e1;
-
   cursor: pointer;
-
   transition:
     background-color 0.2s ease,
     color 0.2s ease,
@@ -647,72 +525,43 @@ const logout = async () => {
   color: #ffffff;
 }
 
-.account-close-button svg {
-  width: 18px;
-  height: 18px;
-
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
+.account-close-button i {
+  font-size: 16px;
 }
 
-/* =========================================
-   OFFCANVAS BODY
-   ========================================= */
+/* OFFCANVAS BODY */
 
 .account-offcanvas-body {
   padding: 20px 16px 24px;
-
   overflow-y: auto;
 }
 
-/* =========================================
-   PROFILE CARD
-   ========================================= */
+/* PROFILE CARD */
 
 .account-profile-card {
   display: flex;
   align-items: center;
-
   gap: 14px;
-
   margin-bottom: 26px;
   padding: 18px;
-
   border: 1px solid rgba(96, 165, 250, 0.16);
-
   border-radius: 16px;
-
-  background:
-    linear-gradient(135deg,
-      rgba(37, 99, 235, 0.18),
-      rgba(30, 64, 175, 0.08));
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(30, 64, 175, 0.08));
 }
 
 .account-profile-avatar {
   width: 56px;
   height: 56px;
   flex: 0 0 56px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border: 1px solid rgba(255, 255, 255, 0.15);
-
   border-radius: 16px;
-
-  background:
-    linear-gradient(135deg,
-      #60a5fa,
-      var(--app-primary-dark));
-
+  background: linear-gradient(135deg, #60a5fa, var(--app-primary-dark));
   color: #ffffff;
-
   font-size: 18px;
   font-weight: 800;
-
   box-shadow:
     0 10px 22px rgba(37, 99, 235, 0.25);
 }
@@ -725,35 +574,26 @@ const logout = async () => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
   color: #ffffff;
-
   font-size: 15px;
   font-weight: 800;
 }
 
 .account-profile-email {
   margin-top: 3px;
-
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
   color: #94a3b8;
-
   font-size: 12px;
 }
 
 .account-profile-status {
   display: inline-flex;
   align-items: center;
-
   gap: 6px;
-
   margin-top: 9px;
-
   color: #bfdbfe;
-
   font-size: 11px;
   font-weight: 600;
 }
@@ -761,18 +601,12 @@ const logout = async () => {
 .account-status-dot {
   width: 7px;
   height: 7px;
-
   border-radius: 50%;
-
   background: #60a5fa;
-
-  box-shadow:
-    0 0 0 3px rgba(96, 165, 250, 0.12);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.12);
 }
 
-/* =========================================
-   MENU SECTIONS
-   ========================================= */
+/* MENU SECTIONS */
 
 .account-menu-section {
   margin-bottom: 22px;
@@ -784,40 +618,26 @@ const logout = async () => {
 
 .account-section-label {
   padding: 0 8px 9px;
-
   color: #64748b;
-
   font-size: 10px;
   font-weight: 800;
-
   letter-spacing: 0.14em;
 }
 
-/* =========================================
-   MENU ITEMS
-   ========================================= */
+/* MENU ITEMS */
 
 .account-menu-item {
   width: 100%;
-
   display: flex;
   align-items: center;
-
   gap: 12px;
-
   padding: 11px 9px;
-
   border: 1px solid transparent;
   border-radius: 12px;
-
   background: transparent;
-
   color: #ffffff;
-
   text-align: left;
-
   cursor: pointer;
-
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,
@@ -826,10 +646,7 @@ const logout = async () => {
 
 .account-menu-item:hover:not(:disabled) {
   background: rgba(37, 99, 235, 0.12);
-
-  border-color:
-    rgba(96, 165, 250, 0.1);
-
+  border-color: rgba(96, 165, 250, 0.1);
   transform: translateX(2px);
 }
 
@@ -847,52 +664,32 @@ const logout = async () => {
   width: 40px;
   height: 40px;
   flex: 0 0 40px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border: 1px solid rgba(96, 165, 250, 0.1);
-
   border-radius: 11px;
-
-  background:
-    rgba(37, 99, 235, 0.1);
-
+  background: rgba(37, 99, 235, 0.1);
   color: #60a5fa;
-}
-
-.account-menu-icon svg {
-  width: 19px;
-  height: 19px;
-
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  font-size: 18px;
 }
 
 .account-menu-content {
   min-width: 0;
   flex: 1;
-
   display: flex;
   flex-direction: column;
 }
 
 .account-menu-title {
   color: #f8fafc;
-
   font-size: 13px;
   font-weight: 700;
 }
 
 .account-menu-description {
   margin-top: 3px;
-
   color: #64748b;
-
   font-size: 11px;
   line-height: 1.35;
 }
@@ -901,24 +698,11 @@ const logout = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: #475569;
+  font-size: 14px;
 }
 
-.account-menu-arrow svg {
-  width: 16px;
-  height: 16px;
-
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* =========================================
-   LOGOUT
-   ========================================= */
+/* LOGOUT */
 
 .account-logout-wrapper {
   padding-top: 8px;
@@ -930,25 +714,15 @@ const logout = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: 8px;
-
   min-height: 46px;
-
   border: 1px solid rgba(248, 113, 113, 0.25);
-
   border-radius: 12px;
-
-  background:
-    rgba(127, 29, 29, 0.12);
-
+  background: rgba(127, 29, 29, 0.12);
   color: #fca5a5;
-
   font-size: 13px;
   font-weight: 700;
-
   cursor: pointer;
-
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,
@@ -957,31 +731,16 @@ const logout = async () => {
 
 .account-logout-button:hover {
   background: rgba(220, 38, 38, 0.18);
-
-  border-color:
-    rgba(248, 113, 113, 0.4);
-
+  border-color: rgba(248, 113, 113, 0.4);
   color: #fecaca;
 }
 
 .account-logout-icon {
   display: flex;
+  font-size: 18px;
 }
 
-.account-logout-icon svg {
-  width: 18px;
-  height: 18px;
-
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* =========================================
-   RESPONSIVE
-   ========================================= */
+/* RESPONSIVE */
 
 @media (max-width: 991.98px) {
   .navbar-brand-copy {
@@ -1005,11 +764,8 @@ const logout = async () => {
   .account-trigger {
     width: 42px;
     height: 42px;
-
     padding: 3px;
-
     justify-content: center;
-
     border-radius: 50%;
   }
 
