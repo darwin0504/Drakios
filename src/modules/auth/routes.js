@@ -2,7 +2,8 @@ import LoginView from "./views/LoginView.vue";
 import RegisterView from "./views/RegisterView.vue";
 import ForgotPasswordView from "./views/ForgotPasswordView.vue";
 import ResetPasswordView from "./views/ResetPasswordView.vue";
-import ChangePasswordView from './views/ChangePasswordView.vue'
+import ChangePasswordView from './views/ChangePasswordView.vue';
+import VerifyEmailView from "./views/VerifyEmailView.vue";
 
 export default [
   {
@@ -32,5 +33,9 @@ export default [
     meta: {
       requiresAuth: true,
     },
+  },
+  {
+    path: "/verify-email",
+    component: VerifyEmailView,
   },
 ];

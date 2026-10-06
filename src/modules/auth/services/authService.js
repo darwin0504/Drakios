@@ -24,4 +24,8 @@ export const authService = {
   changePassword(data) {
     return api.post("/auth/change-password", data);
   },
+
+  verifyEmail(data) {
+    return api.post("/auth/verify-email", data);
+  },
 };

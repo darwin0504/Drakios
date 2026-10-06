@@ -14,7 +14,7 @@ const name = ref('')
 const email = ref('')
 const password = ref('')
 const passwordConfirmation = ref('')
-const direccion = ref('')
+const address = ref('')
 
 const loading = ref(false)
 
@@ -118,8 +118,8 @@ const registerUser = async () => {
       passwordConfirmation: passwordConfirmation.value,
     }
 
-    if (direccion.value.trim()) {
-      data.direccion = direccion.value.trim()
+    if (address.value.trim()) {
+      data.address = address.value.trim()
     }
 
     const response = await authService.register(data)
@@ -280,12 +280,12 @@ const goToLogin = () => {
                 </div>
 
                 <div class="mb-3">
-                  <label for="direccion" class="form-label fw-semibold">
+                  <label for="address" class="form-label fw-semibold">
                     Dirección
                     <small class="text-muted fw-normal">(opcional)</small>
                   </label>
 
-                  <input type="text" id="direccion" v-model.trim="direccion" class="form-control premium-input"
+                  <input type="text" id="address" v-model.trim="address" class="form-control premium-input"
                     placeholder="Bogota, Colombia" />
                 </div>
 
