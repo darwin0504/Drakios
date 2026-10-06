@@ -20,4 +20,8 @@ export const authService = {
   resetPassword(data) {
     return api.post("/auth/reset-password", data);
   },
+
+  changePassword(data) {
+    return api.post("/auth/change-password", data);
+  },
 };

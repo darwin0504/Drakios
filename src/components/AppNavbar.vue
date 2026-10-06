@@ -1,14 +1,12 @@
 <script setup>
-import { computed, nextTick, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Offcanvas } from 'bootstrap'
 import Swal from 'sweetalert2'
 import { useAuthStore } from '@/modules/auth/stores/authStore'
 import { authService } from '@/modules/auth/services/authService'
 
 const router = useRouter()
 const authStore = useAuthStore()
-
 const appName = 'Drakios'
 
 const userName = computed(() => {
@@ -34,22 +32,12 @@ const userInitials = computed(() => {
 })
 
 const navigateFromAccount = async (path) => {
-  await nextTick()
-
   router.push(path)
 }
 
-const goToProfile = () => {
-  navigateFromAccount('/profile')
-}
-
-const goToChangePassword = () => {
-  navigateFromAccount('/change-password')
-}
-
-const goToSettings = () => {
-  navigateFromAccount('/settings')
-}
+const goToProfile = () => navigateFromAccount('/profile')
+const goToChangePassword = () => navigateFromAccount('/change-password')
+const goToSettings = () => navigateFromAccount('/settings')
 
 const logout = async () => {
   const result = await Swal.fire({
@@ -146,8 +134,8 @@ const logout = async () => {
   </nav>
 
   <!-- User account offcanvas -->
-  <div id="userAccountOffcanvas" ref="accountOffcanvas" class="offcanvas offcanvas-end user-account-offcanvas"
-    tabindex="-1" aria-labelledby="userAccountOffcanvasLabel">
+  <div id="userAccountOffcanvas" ref="accountOffcanvas" class="offcanvas offcanvas-start user-account-offcanvas"
+    tabindex="-1" data-bs-scroll="true" data-bs-backdrop="false" aria-labelledby="userAccountOffcanvasLabel">
     <!-- Header -->
     <div class="offcanvas-header account-offcanvas-header">
       <div>
@@ -478,6 +466,10 @@ const logout = async () => {
 .account-offcanvas-header {
   padding: 24px 22px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.offcanvas-header {
+  justify-content: space-between;
 }
 
 .account-offcanvas-kicker {
