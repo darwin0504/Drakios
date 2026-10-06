@@ -208,6 +208,12 @@ const login = async () => {
                 </button>
               </form>
 
+              <div class="text-center mt-3">
+                <RouterLink to="/forgot-password" class="fw-semibold text-decoration-none">
+                  ¿Olvidaste tu contraseña?
+                </RouterLink>
+              </div>
+
               <div class="text-center mt-4">
                 <span class="text-muted">¿No tienes una cuenta?</span>
 
