@@ -173,7 +173,7 @@ const goBack = () => {
           </div>
 
           <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-            <button type="button" class="btn btn-light btn-lg fw-semibold action-btn" @click="goBack">
+            <button type="button" class="btn btn-hero-action btn-lg fw-semibold action-btn" @click="goBack">
               Volver al listado
             </button>
           </div>
@@ -184,7 +184,7 @@ const goBack = () => {
         <div class="col-lg-8">
           <div class="product-form-card">
             <div class="product-form-header">
-              <span class="badge text-bg-success mb-2">
+              <span class="badge text-bg-primary mb-2">
                 Formulario de creación
               </span>
 
@@ -249,7 +249,7 @@ const goBack = () => {
                     Cancelar
                   </button>
 
-                  <button type="submit" class="btn btn-success btn-form-save" :disabled="loading">
+                  <button type="submit" class="btn btn-form-save" :disabled="loading">
                     <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
                       aria-hidden="true"></span>
 

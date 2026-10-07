@@ -177,7 +177,7 @@ onBeforeUnmount(() => {
           </div>
 
           <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-            <RouterLink to="/products/create" class="btn btn-light btn-lg fw-semibold action-btn">
+            <RouterLink to="/products/create" class="btn btn-hero-action btn-lg fw-semibold action-btn">
               + Nuevo producto
             </RouterLink>
           </div>
@@ -321,7 +321,7 @@ onBeforeUnmount(() => {
 
                   <td>
                     <div class="d-flex gap-2">
-                      <RouterLink :to="`/products/edit/${product.id}`" class="btn btn-warning btn-sm action-btn">
+                      <RouterLink :to="`/products/edit/${product.id}`" class="btn btn-soft-primary btn-sm action-btn">
                         Editar
                       </RouterLink>
 

@@ -216,7 +216,7 @@ onMounted(() => {
           </div>
 
           <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-            <button type="button" class="btn btn-light btn-lg fw-semibold action-btn" @click="goBack">
+            <button type="button" class="btn btn-hero-action btn-lg fw-semibold action-btn" @click="goBack">
               Volver al listado
             </button>
           </div>
@@ -227,7 +227,7 @@ onMounted(() => {
         <div class="col-lg-8">
           <div class="product-form-card">
             <div class="product-form-header edit-form-header">
-              <span class="badge text-bg-warning mb-2">
+              <span class="badge text-bg-primary mb-2">
                 Formulario de edición
               </span>
 

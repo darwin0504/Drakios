@@ -230,7 +230,7 @@ const goToLogin = () => {
           <div class="col-md-6">
             <section class="auth-form-panel">
               <div class="mb-4">
-                <span class="badge text-bg-success mb-3">{{ viewName }}</span>
+                <span class="badge text-bg-primary mb-3">{{ viewName }}</span>
 
                 <h2 class="auth-title mb-2">
                   Crear nueva cuenta
@@ -294,7 +294,7 @@ const goToLogin = () => {
                   después de registrar la cuenta serás redirigido al login para iniciar sesión.
                 </div>
 
-                <button type="submit" class="btn btn-success btn-premium-success w-100" :disabled="loading">
+                <button type="submit" class="btn btn-premium w-100" :disabled="loading">
                   <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
                     aria-hidden="true"></span>
 
