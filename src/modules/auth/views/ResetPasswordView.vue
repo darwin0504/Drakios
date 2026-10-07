@@ -131,7 +131,7 @@ const requestNewLink = () => {
                 <p class="auth-subtitle mb-0">Ingresa una nueva contraseña para tu cuenta.</p>
             </div>
 
-            <div v-if="!token" class="alert alert-warning" role="alert">
+            <div v-if="!token" class="alert alert-info" role="alert">
                 <strong>Enlace incompleto.</strong>
 
                 <div class="mt-2">
@@ -189,7 +189,7 @@ const requestNewLink = () => {
 
 .reset-password-header .app-logo {
     margin: 0 auto 20px;
-    background: #0d6efd;
+    background: linear-gradient(135deg, var(--app-primary), var(--app-primary-dark));
     color: #ffffff;
 }
 

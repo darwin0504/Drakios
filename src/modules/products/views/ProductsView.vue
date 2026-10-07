@@ -193,8 +193,8 @@ onBeforeUnmount(() => {
                 <h3 class="fw-bold mb-0">{{ totalProducts }}</h3>
               </div>
 
-              <div class="stat-icon">
-                P
+              <div class="stat-icon" aria-hidden="true">
+                <i class="bi bi-box-seam"></i>
               </div>
             </div>
           </div>
@@ -208,8 +208,8 @@ onBeforeUnmount(() => {
                 <h3 class="fw-bold mb-0">{{ totalStock }}</h3>
               </div>
 
-              <div class="stat-icon">
-                S
+              <div class="stat-icon" aria-hidden="true">
+                <i class="bi bi-stack"></i>
               </div>
             </div>
           </div>
@@ -223,8 +223,8 @@ onBeforeUnmount(() => {
                 <h3 class="fw-bold mb-0">{{ formatCurrency(totalInventoryValue) }}</h3>
               </div>
 
-              <div class="stat-icon">
-                V
+              <div class="stat-icon" aria-hidden="true">
+                <i class="bi bi-currency-dollar"></i>
               </div>
             </div>
           </div>
@@ -238,8 +238,8 @@ onBeforeUnmount(() => {
                 <h3 class="fw-bold mb-0">{{ lowStockProducts }}</h3>
               </div>
 
-              <div class="stat-icon">
-                !
+              <div class="stat-icon" aria-hidden="true">
+                <i class="bi bi-exclamation-triangle"></i>
               </div>
             </div>
           </div>
@@ -276,12 +276,13 @@ onBeforeUnmount(() => {
         </div>
 
         <div class="card-body p-4">
-          <div v-if="loading" class="alert alert-info border-0 rounded-4">
+          <div v-if="loading" class="alert alert-info border-0 rounded-4" role="status" aria-live="polite">
             Cargando productos desde la API...
           </div>
 
           <div class="table-responsive">
-            <table id="productsTable" class="table table-hover align-middle nowrap premium-table" style="width: 100%;">
+            <table id="productsTable" class="table table-hover align-middle nowrap premium-table" style="width: 100%;"
+              aria-label="Productos registrados">
               <thead>
                 <tr>
                   <th>ID</th>
@@ -321,11 +322,13 @@ onBeforeUnmount(() => {
 
                   <td>
                     <div class="d-flex gap-2">
-                      <RouterLink :to="`/products/edit/${product.id}`" class="btn btn-soft-primary btn-sm action-btn">
+                      <RouterLink :to="`/products/edit/${product.id}`" class="btn btn-soft-primary btn-sm action-btn"
+                        :aria-label="`Editar ${product.name}`">
                         Editar
                       </RouterLink>
 
                       <button type="button" class="btn btn-soft-danger btn-sm action-btn"
+                        :aria-label="`Eliminar ${product.name}`"
                         @click="confirmDelete(product)">
                         Eliminar
                       </button>

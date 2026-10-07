@@ -126,7 +126,7 @@ const goToLogin = () => {
 
 .forgot-password-header .app-logo {
     margin: 0 auto 20px;
-    background: #0d6efd;
+    background: linear-gradient(135deg, var(--app-primary), var(--app-primary-dark));
     color: #ffffff;
 }
 

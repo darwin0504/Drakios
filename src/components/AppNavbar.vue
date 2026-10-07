@@ -47,7 +47,7 @@ const logout = async () => {
     showCancelButton: true,
     confirmButtonText: 'Sí, salir',
     cancelButtonText: 'Cancelar',
-    confirmButtonColor: '#dc3545',
+    confirmButtonColor: '#398cf5',
   })
 
   if (!result.isConfirmed) return
@@ -298,8 +298,8 @@ const logout = async () => {
   background: rgba(15, 23, 42, 0.97);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+  border-bottom: 1px solid rgba(145, 208, 255, 0.25);
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.28), 0 1px 15px rgba(57, 140, 245, 0.14);
 }
 
 .navbar-brand-premium {
@@ -327,7 +327,7 @@ const logout = async () => {
   color: #ffffff;
   font-weight: 800;
 
-  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 6px 16px rgba(49, 95, 158, 0.34), 0 0 18px rgba(145, 208, 255, 0.2);
 }
 
 .navbar-brand-copy {
@@ -362,8 +362,9 @@ const logout = async () => {
 }
 
 .premium-nav-link.router-link-active {
-  background: rgba(37, 99, 235, 0.22);
-  color: #dbeafe !important;
+  background: rgba(57, 140, 245, 0.23);
+  color: #e0f1ff !important;
+  box-shadow: inset 0 0 0 1px rgba(145, 208, 255, 0.36), 0 0 17px rgba(57, 140, 245, 0.2);
 }
 
 /* ACCOUNT TRIGGER */
@@ -387,14 +388,14 @@ const logout = async () => {
 }
 
 .account-trigger:hover {
-  background: rgba(37, 99, 235, 0.18);
-  border-color: rgba(96, 165, 250, 0.35);
+  background: rgba(57, 140, 245, 0.2);
+  border-color: rgba(145, 208, 255, 0.44);
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2);
 }
 
 .account-trigger:focus-visible {
-  outline: 2px solid #60a5fa;
+  outline: 2px solid var(--app-neon);
   outline-offset: 3px;
 }
 
@@ -406,11 +407,11 @@ const logout = async () => {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: linear-gradient(135deg, #60a5fa, var(--app-primary));
+  background: linear-gradient(135deg, #76baff, var(--app-primary-dark));
   color: #ffffff;
   font-size: 13px;
   font-weight: 800;
-  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 6px 14px rgba(49, 95, 158, 0.34), 0 0 14px rgba(145, 208, 255, 0.18);
 }
 
 .account-trigger-info {
@@ -455,7 +456,7 @@ const logout = async () => {
 .user-account-offcanvas {
   width: 400px !important;
   max-width: 100vw;
-  background: linear-gradient(180deg, #0f172a 0%, #111c35 45%, #0f172a 100%);
+  background: linear-gradient(180deg, #141c28 0%, #182231 48%, #141c28 100%);
   color: #ffffff;
   border-left: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: -20px 0 60px rgba(2, 6, 23, 0.35);
@@ -474,7 +475,7 @@ const logout = async () => {
 
 .account-offcanvas-kicker {
   margin-bottom: 6px;
-  color: #60a5fa;
+  color: var(--app-neon);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -512,8 +513,8 @@ const logout = async () => {
 }
 
 .account-close-button:hover {
-  background: rgba(37, 99, 235, 0.2);
-  border-color: rgba(96, 165, 250, 0.3);
+  background: rgba(139, 182, 232, 0.12);
+  border-color: rgba(160, 190, 222, 0.25);
   color: #ffffff;
 }
 
@@ -536,9 +537,9 @@ const logout = async () => {
   gap: 14px;
   margin-bottom: 26px;
   padding: 18px;
-  border: 1px solid rgba(96, 165, 250, 0.16);
+  border: 1px solid rgba(145, 208, 255, 0.29);
   border-radius: 16px;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(30, 64, 175, 0.08));
+  background: linear-gradient(135deg, rgba(57, 140, 245, 0.22), rgba(57, 140, 245, 0.07));
 }
 
 .account-profile-avatar {
@@ -550,12 +551,12 @@ const logout = async () => {
   justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
-  background: linear-gradient(135deg, #60a5fa, var(--app-primary-dark));
+  background: linear-gradient(135deg, #76baff, var(--app-primary-dark));
   color: #ffffff;
   font-size: 18px;
   font-weight: 800;
   box-shadow:
-    0 10px 22px rgba(37, 99, 235, 0.25);
+    0 10px 22px rgba(49, 95, 158, 0.32), 0 0 16px rgba(145, 208, 255, 0.18);
 }
 
 .account-profile-info {
@@ -585,7 +586,7 @@ const logout = async () => {
   align-items: center;
   gap: 6px;
   margin-top: 9px;
-  color: #bfdbfe;
+  color: #c8e1fb;
   font-size: 11px;
   font-weight: 600;
 }
@@ -594,8 +595,8 @@ const logout = async () => {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.12);
+  background: var(--app-neon);
+  box-shadow: 0 0 0 3px rgba(139, 182, 232, 0.12);
 }
 
 /* MENU SECTIONS */
@@ -637,13 +638,13 @@ const logout = async () => {
 }
 
 .account-menu-item:hover:not(:disabled) {
-  background: rgba(37, 99, 235, 0.12);
-  border-color: rgba(96, 165, 250, 0.1);
+  background: rgba(57, 140, 245, 0.18);
+  border-color: rgba(145, 208, 255, 0.28);
   transform: translateX(2px);
 }
 
 .account-menu-item:focus-visible {
-  outline: 2px solid #60a5fa;
+  outline: 2px solid var(--app-neon);
   outline-offset: 2px;
 }
 
@@ -659,10 +660,10 @@ const logout = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(96, 165, 250, 0.1);
+  border: 1px solid rgba(160, 190, 222, 0.12);
   border-radius: 11px;
-  background: rgba(37, 99, 235, 0.1);
-  color: #60a5fa;
+  background: rgba(57, 140, 245, 0.2);
+  color: var(--app-neon);
   font-size: 18px;
 }
 

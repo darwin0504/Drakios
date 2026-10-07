@@ -193,7 +193,7 @@ const goBack = () => {
               </h4>
 
               <p class="form-section-subtitle mb-0">
-                Ingresa los campos requeridos para crear un nuevo registro.
+                Los campos marcados con <span class="required-mark" aria-hidden="true">*</span> son obligatorios.
               </p>
             </div>
 
@@ -202,29 +202,29 @@ const goBack = () => {
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="name" class="form-label fw-semibold">
-                      Nombre del producto
+                      Nombre del producto <span class="required-mark" aria-hidden="true">*</span>
                     </label>
 
                     <input type="text" id="name" v-model="name" class="form-control premium-input"
-                      placeholder="Mouse inalámbrico" />
+                      placeholder="Mouse inalámbrico" aria-required="true" />
                   </div>
 
                   <div class="col-md-3 mb-3">
                     <label for="price" class="form-label fw-semibold">
-                      Precio
+                      Precio <span class="required-mark" aria-hidden="true">*</span>
                     </label>
 
                     <input type="number" id="price" v-model="price" class="form-control premium-input" min="0"
-                      step="0.01" placeholder="59.90" />
+                      step="0.01" placeholder="59.90" aria-required="true" />
                   </div>
 
                   <div class="col-md-3 mb-3">
                     <label for="quantity" class="form-label fw-semibold">
-                      Cantidad
+                      Cantidad <span class="required-mark" aria-hidden="true">*</span>
                     </label>
 
                     <input type="number" id="quantity" v-model="quantity" class="form-control premium-input" min="0"
-                      step="1" placeholder="20" />
+                      step="1" placeholder="20" aria-required="true" />
                   </div>
 
                   <div class="col-md-12 mb-3">
@@ -249,7 +249,7 @@ const goBack = () => {
                     Cancelar
                   </button>
 
-                  <button type="submit" class="btn btn-form-save" :disabled="loading">
+                  <button type="submit" class="btn btn-form-save" :disabled="loading" :aria-busy="loading">
                     <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
                       aria-hidden="true"></span>
 

@@ -222,7 +222,7 @@ const cancel = () => {
 
 .change-password-header .app-logo {
     margin: 0 auto 20px;
-    background: #0d6efd;
+    background: linear-gradient(135deg, var(--app-primary), var(--app-primary-dark));
     color: #ffffff;
 }
 
@@ -232,9 +232,9 @@ const cancel = () => {
     gap: 12px;
     margin-bottom: 24px;
     padding: 14px;
-    border: 1px solid rgba(37, 99, 235, 0.12);
+    border: 1px solid rgba(139, 182, 232, 0.18);
     border-radius: 12px;
-    background: rgba(37, 99, 235, 0.05);
+    background: rgba(139, 182, 232, 0.06);
 }
 
 .security-notice-icon {
@@ -245,7 +245,7 @@ const cancel = () => {
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    background: rgba(37, 99, 235, 0.1);
+    background: rgba(139, 182, 232, 0.1);
     color: var(--app-primary);
     font-size: 17px;
 }
