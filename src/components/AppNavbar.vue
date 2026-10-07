@@ -43,9 +43,9 @@ const logout = async () => {
   const result = await Swal.fire({
     icon: 'question',
     title: 'Cerrar sesión',
-    text: '¿Seguro que deseas cerrar sesión?',
+    text: '¿Deseas cerrar tu sesión en Drakios?',
     showCancelButton: true,
-    confirmButtonText: 'Sí, salir',
+    confirmButtonText: 'Cerrar sesión',
     cancelButtonText: 'Cancelar',
     confirmButtonColor: '#398cf5',
   })
@@ -79,7 +79,7 @@ const logout = async () => {
           </div>
 
           <div class="navbar-app-subtitle">
-            Panel de productos
+            Gestión comercial
           </div>
         </div>
       </RouterLink>
@@ -148,7 +148,7 @@ const logout = async () => {
         </h5>
 
         <p class="account-offcanvas-subtitle">
-          Administra tu cuenta y seguridad
+          Consulta tu perfil y administra la seguridad de tu cuenta
         </p>
       </div>
 
@@ -200,7 +200,7 @@ const logout = async () => {
             </span>
 
             <span class="account-menu-description">
-              Consulta y administra tu información
+              Consulta tu información personal
             </span>
           </span>
 
@@ -242,7 +242,7 @@ const logout = async () => {
             </span>
 
             <span class="account-menu-description">
-              Configura las preferencias de tu cuenta
+              Administra las preferencias de tu cuenta
             </span>
           </span>
 
@@ -269,7 +269,7 @@ const logout = async () => {
             </span>
 
             <span class="account-menu-description">
-              Próximamente
+              Próximamente disponible
             </span>
           </span>
         </button>

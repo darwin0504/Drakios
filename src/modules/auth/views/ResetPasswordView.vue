@@ -28,7 +28,7 @@ const validateForm = () => {
         Swal.fire({
             icon: 'error',
             title: 'Enlace inválido',
-            text: 'El enlace de recuperación no contiene un token válido.',
+            text: 'El enlace para restablecer la contraseña no es válido o ha expirado.',
         })
 
         return false
@@ -96,7 +96,7 @@ const resetPassword = async () => {
             text:
                 response.data?.message ||
                 'Tu contraseña fue actualizada correctamente.',
-            confirmButtonText: 'Ir al login',
+            confirmButtonText: 'Volver al inicio de sesión',
         })
 
         router.push('/login')
@@ -132,10 +132,10 @@ const requestNewLink = () => {
             </div>
 
             <div v-if="!token" class="alert alert-info" role="alert">
-                <strong>Enlace incompleto.</strong>
+                <strong>Enlace no válido o vencido.</strong>
 
                 <div class="mt-2">
-                    El enlace de recuperación no contiene un token válido.
+                    Solicita un nuevo enlace para restablecer tu contraseña.
                 </div>
             </div>
 

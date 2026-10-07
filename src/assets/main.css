@@ -328,17 +328,23 @@ body {
   font-weight: 700;
   color: #f1f5f9;
   min-width: 150px;
+  width: 240px;
   max-width: 240px;
-  white-space: normal;
-  overflow-wrap: anywhere;
 }
 
 .premium-table .product-description-cell {
   color: #a0adbd;
   max-width: 360px;
   min-width: 180px;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  width: 360px;
+}
+
+.premium-table .product-name-cell > span,
+.premium-table .product-description-cell > span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .premium-table td:last-child .d-flex {

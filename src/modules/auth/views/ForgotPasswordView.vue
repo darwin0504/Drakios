@@ -54,11 +54,11 @@ const submitRequest = async () => {
 
         await Swal.fire({
             icon: 'success',
-            title: 'Solicitud enviada',
+            title: 'Revisa tu correo',
             text:
                 response.data?.message ||
                 'Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña.',
-            confirmButtonText: 'Ir al login',
+            confirmButtonText: 'Volver al inicio de sesión',
         })
 
         router.push('/login')
@@ -87,8 +87,7 @@ const goToLogin = () => {
                 <h2 class="auth-title mb-2">Recuperar contraseña</h2>
 
                 <p class="auth-subtitle mb-0">
-                    Ingresa el correo electrónico asociado a tu cuenta
-                    y te enviaremos un enlace para restablecer tu contraseña.
+                    Indica el correo asociado a tu cuenta. Si está registrado, recibirás instrucciones para restablecer tu contraseña.
                 </p>
             </div>
 
@@ -104,7 +103,7 @@ const goToLogin = () => {
                     <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
                         aria-hidden="true"></span>
 
-                    {{ loading ? 'Enviando...' : 'Enviar enlace' }}
+                    {{ loading ? 'Enviando instrucciones...' : 'Enviar instrucciones' }}
                 </button>
             </form>
 

@@ -9,7 +9,7 @@ const route = useRoute();
 const loading = ref(true);
 const success = ref(false);
 const errorMessage = ref(
-    "No fue posible verificar tu correo electrónico.",
+    "No fue posible verificar tu correo electrónico. Revisa el enlace e inténtalo nuevamente.",
 );
 
 const verifyEmail = async () => {
@@ -39,7 +39,7 @@ const verifyEmail = async () => {
             errorMessage.value = message;
         } else {
             errorMessage.value =
-                "No fue posible verificar tu correo electrónico. Inténtalo nuevamente.";
+                "No fue posible verificar tu correo electrónico. Revisa el enlace e inténtalo nuevamente.";
         }
     } finally {
         loading.value = false;
@@ -70,11 +70,11 @@ onMounted(() => {
                             </div>
 
                             <h2 class="h4 mb-2">
-                                Verificando tu correo
+                                Verificando tu correo electrónico
                             </h2>
 
                             <p class="text-muted mb-0">
-                                Estamos validando tu enlace de verificación.
+                                Estamos confirmando la dirección asociada a tu cuenta.
                             </p>
                         </div>
 
@@ -84,15 +84,15 @@ onMounted(() => {
                             </div>
 
                             <h2 class="h4 mb-2">
-                                Correo verificado
+                                Correo electrónico verificado
                             </h2>
 
                             <p class="text-muted mb-4">
-                                Tu correo electrónico fue verificado correctamente.
+                                Ya puedes iniciar sesión y acceder a Drakios.
                             </p>
 
                             <button type="button" class="btn btn-primary" @click="goToLogin">
-                                Ir a iniciar sesión
+                                Iniciar sesión
                             </button>
                         </div>
 
@@ -102,7 +102,7 @@ onMounted(() => {
                             </div>
 
                             <h2 class="h4 mb-2">
-                                No se pudo verificar el correo
+                                No se pudo verificar tu correo electrónico
                             </h2>
 
                             <p class="text-danger mb-4">
@@ -110,7 +110,7 @@ onMounted(() => {
                             </p>
 
                             <button type="button" class="btn btn-primary" @click="goToLogin">
-                                Ir a iniciar sesión
+                                Iniciar sesión
                             </button>
                         </div>
 

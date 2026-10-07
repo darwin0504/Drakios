@@ -54,7 +54,12 @@ const formatCurrency = (value) => {
   const numberValue = Number(value)
 
   if (Number.isNaN(numberValue)) {
-    return 'COP/ 0.00'
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(0)
   }
 
   return new Intl.NumberFormat('es-CO', {
@@ -139,7 +144,7 @@ const loadProduct = async () => {
   } catch (error) {
     await Swal.fire({
       icon: 'error',
-      title: 'Error al obtener producto',
+      title: 'No fue posible cargar el producto',
       text: getErrorMessage(error),
     })
 
@@ -176,7 +181,7 @@ const updateProduct = async () => {
   } catch (error) {
     Swal.fire({
       icon: 'error',
-      title: 'Error al actualizar producto',
+      title: 'No fue posible actualizar el producto',
       text: getErrorMessage(error),
     })
   } finally {
@@ -210,8 +215,7 @@ onMounted(() => {
             </h1>
 
             <p class="text-white-50 mb-0">
-              Modifica la información del producto seleccionado. Los cambios se enviarán
-              a la API y luego volverás al listado principal.
+              Actualiza los datos comerciales y las existencias del artículo seleccionado.
             </p>
           </div>
 
@@ -228,11 +232,11 @@ onMounted(() => {
           <div class="product-form-card">
             <div class="product-form-header edit-form-header">
               <span class="badge text-bg-primary mb-2">
-                Formulario de edición
+                Edición del artículo
               </span>
 
               <h4 class="form-section-title mb-1">
-                Datos actuales del producto
+                Información del producto
               </h4>
 
               <p class="form-section-subtitle mb-0">
@@ -248,7 +252,7 @@ onMounted(() => {
                   <div>
                     <strong>Cargando información del producto...</strong>
                     <div class="small">
-                      Estamos consultando los datos desde el backend.
+                      En breve podrás revisar y actualizar sus datos.
                     </div>
                   </div>
                 </div>
@@ -276,7 +280,7 @@ onMounted(() => {
 
                   <div class="col-md-3 mb-3">
                     <label for="quantity" class="form-label fw-semibold">
-                      Cantidad <span class="required-mark" aria-hidden="true">*</span>
+                      Existencias <span class="required-mark" aria-hidden="true">*</span>
                     </label>
 
                     <input type="number" id="quantity" v-model="quantity" class="form-control premium-input" min="0"
@@ -290,14 +294,12 @@ onMounted(() => {
                     </label>
 
                     <textarea id="description" v-model="description" class="form-control premium-input" rows="5"
-                      placeholder="Descripción opcional del producto"></textarea>
+                      placeholder="Describe las características principales del producto"></textarea>
                   </div>
                 </div>
 
                 <div class="form-help-box mb-4">
-                  <strong>Importante:</strong>
-                  al actualizar se enviarán los nuevos valores al endpoint de edición.
-                  El precio será convertido a número y la cantidad a entero.
+                  Revisa el precio de venta y registra las existencias en unidades enteras antes de guardar los cambios.
                 </div>
 
                 <div class="d-flex flex-column flex-md-row justify-content-end gap-2">
@@ -326,7 +328,7 @@ onMounted(() => {
 
               <div>
                 <h5 class="fw-bold mb-1">
-                  Vista de edición
+                  Resumen actualizado
                 </h5>
 
                 <small class="text-white-50">
@@ -346,18 +348,18 @@ onMounted(() => {
             </div>
 
             <div class="preview-row">
-              <span class="preview-label">Cantidad</span>
+              <span class="preview-label">Existencias</span>
               <span class="preview-value">{{ previewQuantity }}</span>
             </div>
 
             <div class="preview-row">
-              <span class="preview-label">Valor estimado</span>
+              <span class="preview-label">Valor potencial de venta</span>
               <span class="preview-value">{{ formatCurrency(previewTotal) }}</span>
             </div>
 
             <div class="mt-4">
               <p class="text-white-50 mb-0">
-                Los datos mostrados aquí se actualizan mientras editas el formulario.
+                Esta vista previa refleja los cambios que realices en el formulario.
               </p>
             </div>
           </aside>

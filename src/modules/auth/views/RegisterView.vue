@@ -8,7 +8,7 @@ import { getErrorMessage } from '@/helpers/errorHelper'
 const router = useRouter()
 
 const appName = 'Drakios'
-const viewName = 'Registro de usuario'
+const viewName = 'Crear cuenta'
 
 const name = ref('')
 const email = ref('')
@@ -126,7 +126,7 @@ const registerUser = async () => {
 
     await Swal.fire({
       icon: 'success',
-      title: 'Usuario registrado',
+      title: 'Cuenta creada',
       text: response.data?.message || 'Tu cuenta fue creada correctamente.',
       timer: 1600,
       showConfirmButton: false,
@@ -136,7 +136,7 @@ const registerUser = async () => {
   } catch (error) {
     Swal.fire({
       icon: 'error',
-      title: 'Error al registrar usuario',
+      title: 'Error al crear la cuenta',
       text: getErrorMessage(error),
     })
   } finally {
@@ -161,34 +161,34 @@ const goToLogin = () => {
 
                 <div>
                   <h3 class="mb-0 fw-bold">{{ appName }}</h3>
-                  <small class="text-white-50">Panel de gestión de productos</small>
+                  <small class="text-white-50">Gestión de tu negocio</small>
                 </div>
               </div>
 
               <span class="auth-badge mb-4">
-                Nueva cuenta de acceso
+                Comienza con Drakios
               </span>
 
               <h1 class="display-6 fw-bold mb-3">
-                Crea tu usuario y empieza a gestionar tu inventario.
+                Da el primer paso para organizar tu negocio.
               </h1>
 
               <p class="text-white-50 mb-5">
-                Registra una cuenta para acceder al panel, iniciar sesión y consumir los endpoints protegidos con JWT.
+                Crea tu cuenta y prepárate para gestionar productos, inventario, ventas y clientes desde un solo lugar.
               </p>
 
               <div class="row g-3 mb-5">
                 <div class="col-6">
                   <div class="auth-mini-stat">
-                    <h4 class="fw-bold mb-1">JWT</h4>
-                    <small class="text-white-50">Sesión protegida</small>
+                    <h4 class="fw-bold mb-1">Productos</h4>
+                    <small class="text-white-50">Catálogo organizado</small>
                   </div>
                 </div>
 
                 <div class="col-6">
                   <div class="auth-mini-stat">
-                    <h4 class="fw-bold mb-1">CRUD</h4>
-                    <small class="text-white-50">Productos API</small>
+                    <h4 class="fw-bold mb-1">Inventario</h4>
+                    <small class="text-white-50">Existencias al día</small>
                   </div>
                 </div>
               </div>
@@ -197,9 +197,9 @@ const goToLogin = () => {
                 <div class="auth-feature">
                   <span class="auth-feature-dot"></span>
                   <div>
-                    <h6 class="mb-1 fw-semibold">Registro validado</h6>
+                    <h6 class="mb-1 fw-semibold">Tu espacio de trabajo</h6>
                     <small class="text-white-50">
-                      Nombre, correo y contraseña con reglas básicas.
+                      Reúne en un solo lugar la información de tu negocio.
                     </small>
                   </div>
                 </div>
@@ -207,9 +207,9 @@ const goToLogin = () => {
                 <div class="auth-feature">
                   <span class="auth-feature-dot"></span>
                   <div>
-                    <h6 class="mb-1 fw-semibold">Datos seguros</h6>
+                    <h6 class="mb-1 fw-semibold">Gestión más simple</h6>
                     <small class="text-white-50">
-                      El frontend solo envía password, nunca password_hash.
+                      Organiza tus productos y lleva el control de tus operaciones.
                     </small>
                   </div>
                 </div>
@@ -219,7 +219,7 @@ const goToLogin = () => {
                   <div>
                     <h6 class="mb-1 fw-semibold">Acceso rápido</h6>
                     <small class="text-white-50">
-                      Luego del registro podrás iniciar sesión en el panel.
+                      Al crear tu cuenta, podrás iniciar sesión y comenzar a organizar tu negocio.
                     </small>
                   </div>
                 </div>
@@ -237,7 +237,7 @@ const goToLogin = () => {
                 </h2>
 
                 <p class="auth-subtitle mb-0">
-                  Completa tus datos para registrar un usuario en el sistema.
+                  Completa tus datos para crear tu cuenta y comenzar.
                 </p>
               </div>
 
@@ -248,7 +248,7 @@ const goToLogin = () => {
                   </label>
 
                   <input type="text" id="name" v-model.trim="name" class="form-control premium-input"
-                    placeholder="Darwin Bedoya" autocomplete="name" required />
+                    placeholder="Nombre y apellido" autocomplete="name" required />
                 </div>
 
                 <div class="mb-3">
@@ -257,7 +257,7 @@ const goToLogin = () => {
                   </label>
 
                   <input type="email" id="email" v-model.trim="email" class="form-control premium-input"
-                    placeholder="correo@demo.com" autocomplete="email" required />
+                    placeholder="nombre@empresa.com" autocomplete="email" required />
                 </div>
 
                 <div class="mb-3">
@@ -290,8 +290,8 @@ const goToLogin = () => {
                 </div>
 
                 <div class="auth-register-box mb-4">
-                  <strong>Nota:</strong>
-                  después de registrar la cuenta serás redirigido al login para iniciar sesión.
+                  <strong>¡Ya casi!</strong>
+                  Al crear tu cuenta podrás iniciar sesión y acceder a Drakios.
                 </div>
 
                 <button type="submit" class="btn btn-premium w-100" :disabled="loading">
@@ -312,7 +312,7 @@ const goToLogin = () => {
 
               <div class="border-top mt-4 pt-3 text-center">
                 <small class="text-muted">
-                  {{ appName }} © Registro de usuarios
+                  {{ appName }} © Gestión comercial e inventario
                 </small>
               </div>
             </section>

@@ -50,7 +50,12 @@ const formatCurrency = (value) => {
   const numberValue = Number(value)
 
   if (Number.isNaN(numberValue)) {
-    return 'COP/ 0.00'
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(0)
   }
 
   return new Intl.NumberFormat('es-CO', {
@@ -137,7 +142,7 @@ const saveProduct = async () => {
   } catch (error) {
     Swal.fire({
       icon: 'error',
-      title: 'Error al crear producto',
+      title: 'No fue posible guardar el producto',
       text: getErrorMessage(error),
     })
   } finally {
@@ -167,8 +172,7 @@ const goBack = () => {
             </h1>
 
             <p class="text-white-50 mb-0">
-              Completa la información del producto para guardarlo en tu inventario.
-              El precio se enviará como número y la cantidad como entero.
+              Registra los datos comerciales y las existencias iniciales del artículo para incorporarlo a tu catálogo.
             </p>
           </div>
 
@@ -185,11 +189,11 @@ const goBack = () => {
           <div class="product-form-card">
             <div class="product-form-header">
               <span class="badge text-bg-primary mb-2">
-                Formulario de creación
+                Nuevo artículo
               </span>
 
               <h4 class="form-section-title mb-1">
-                Datos del producto
+                Información del producto
               </h4>
 
               <p class="form-section-subtitle mb-0">
@@ -220,7 +224,7 @@ const goBack = () => {
 
                   <div class="col-md-3 mb-3">
                     <label for="quantity" class="form-label fw-semibold">
-                      Cantidad <span class="required-mark" aria-hidden="true">*</span>
+                      Existencias iniciales <span class="required-mark" aria-hidden="true">*</span>
                     </label>
 
                     <input type="number" id="quantity" v-model="quantity" class="form-control premium-input" min="0"
@@ -234,14 +238,12 @@ const goBack = () => {
                     </label>
 
                     <textarea id="description" v-model="description" class="form-control premium-input" rows="5"
-                      placeholder="Descripción opcional del producto"></textarea>
+                      placeholder="Describe las características principales del producto"></textarea>
                   </div>
                 </div>
 
                 <div class="form-help-box mb-4">
-                  <strong>Validación:</strong>
-                  el nombre debe tener mínimo 2 caracteres, el precio debe ser mayor o igual a 0
-                  y la cantidad debe ser un número entero.
+                  Registra la cantidad en unidades enteras y verifica que el precio corresponda al valor de venta del producto.
                 </div>
 
                 <div class="d-flex flex-column flex-md-row justify-content-end gap-2">
@@ -274,7 +276,7 @@ const goBack = () => {
                 </h5>
 
                 <small class="text-white-50">
-                  Resumen antes de guardar
+                  Resumen del artículo
                 </small>
               </div>
             </div>
@@ -290,18 +292,18 @@ const goBack = () => {
             </div>
 
             <div class="preview-row">
-              <span class="preview-label">Cantidad</span>
+              <span class="preview-label">Existencias</span>
               <span class="preview-value">{{ previewQuantity }}</span>
             </div>
 
             <div class="preview-row">
-              <span class="preview-label">Valor estimado</span>
+              <span class="preview-label">Valor potencial de venta</span>
               <span class="preview-value">{{ formatCurrency(previewTotal) }}</span>
             </div>
 
             <div class="mt-4">
               <p class="text-white-50 mb-0">
-                Este producto será enviado a la API y luego aparecerá en el listado principal.
+                Al guardar, el artículo quedará disponible en tu catálogo con las existencias registradas.
               </p>
             </div>
           </aside>

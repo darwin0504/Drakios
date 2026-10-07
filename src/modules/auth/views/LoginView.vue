@@ -112,29 +112,29 @@ const login = async () => {
 
                 <div>
                   <h3 class="mb-0 fw-bold">{{ appName }}</h3>
-                  <small class="text-white-50">Panel de gestión de productos</small>
+                  <small class="text-white-50">Gestión de tu negocio</small>
                 </div>
               </div>
 
               <span class="auth-badge mb-4">
-                Sistema CRUD con Vue.js + JWT
+                Controla tu negocio en un solo lugar
               </span>
 
               <h1 class="display-6 fw-bold mb-3">
-                Administra tus productos de forma rápida y segura.
+                Todo lo que necesitas para hacer crecer tu negocio.
               </h1>
 
               <p class="text-white-50 mb-5">
-                Accede al panel para listar, crear, editar y eliminar productos.
+                Organiza tus productos, controla tu inventario y mantén tus operaciones al día.
               </p>
 
               <div class="d-grid gap-4">
                 <div class="auth-feature">
                   <span class="auth-feature-dot"></span>
                   <div>
-                    <h6 class="mb-1 fw-semibold">Autenticación protegida</h6>
+                    <h6 class="mb-1 fw-semibold">Inventario bajo control</h6>
                     <small class="text-white-50">
-                      Manejo de sesión mediante token JWT.
+                      Consulta tus productos y mantén un seguimiento de tus existencias.
                     </small>
                   </div>
                 </div>
@@ -142,9 +142,9 @@ const login = async () => {
                 <div class="auth-feature">
                   <span class="auth-feature-dot"></span>
                   <div>
-                    <h6 class="mb-1 fw-semibold">Gestión de productos</h6>
+                    <h6 class="mb-1 fw-semibold">Operaciones organizadas</h6>
                     <small class="text-white-50">
-                      Interfaz sencilla para operaciones CRUD.
+                      Gestiona ventas, compras y la información de tus clientes.
                     </small>
                   </div>
                 </div>
@@ -152,9 +152,9 @@ const login = async () => {
                 <div class="auth-feature">
                   <span class="auth-feature-dot"></span>
                   <div>
-                    <h6 class="mb-1 fw-semibold">Interfaz premium</h6>
+                    <h6 class="mb-1 fw-semibold">Información para decidir</h6>
                     <small class="text-white-50">
-                      Diseño limpio con Bootstrap y SweetAlert2.
+                      Accede a los datos de tu negocio desde un espacio centralizado.
                     </small>
                   </div>
                 </div>
@@ -172,7 +172,7 @@ const login = async () => {
                 </h2>
 
                 <p class="auth-subtitle mb-0">
-                  Ingresa tus credenciales para acceder al panel administrativo.
+                  Inicia sesión para continuar con la gestión de tu negocio.
                 </p>
               </div>
 
@@ -183,7 +183,7 @@ const login = async () => {
                   </label>
 
                   <input type="email" id="email" v-model.trim="email" class="form-control premium-input"
-                    placeholder="admin@drakios.com" autocomplete="email" />
+                    placeholder="correo@empresa.com" autocomplete="email" />
                 </div>
 
                 <div class="mb-3">
@@ -196,15 +196,14 @@ const login = async () => {
                 </div>
 
                 <div class="auth-demo-box mb-4">
-                  <strong>Demo:</strong>
-                  puedes usar el usuario de prueba configurado en tu backend o el usuario que ya registraste.
+                    Ingresa con el correo y la contraseña asociados a tu cuenta.
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-premium w-100" :disabled="loading">
                   <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
                     aria-hidden="true"></span>
 
-                  {{ loading ? 'Validando acceso...' : 'Ingresar al panel' }}
+                  {{ loading ? 'Validando acceso...' : 'Iniciar sesión' }}
                 </button>
               </form>
 
@@ -224,7 +223,7 @@ const login = async () => {
 
               <div class="border-top mt-4 pt-3 text-center">
                 <small class="text-muted">
-                  {{ appName }} © Panel frontend con Vue.js
+                  {{ appName }} © Gestión comercial e inventario
                 </small>
               </div>
             </section>

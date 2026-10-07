@@ -41,7 +41,12 @@ const formatCurrency = (value) => {
   const numberValue = Number(value)
 
   if (Number.isNaN(numberValue)) {
-    return 'COP/ 0.00'
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(0)
   }
 
   return new Intl.NumberFormat('es-CO', {
@@ -103,7 +108,7 @@ const loadProducts = async () => {
   } catch (error) {
     Swal.fire({
       icon: 'error',
-      title: 'Error al listar productos',
+      title: 'No fue posible cargar los productos',
       text: getErrorMessage(error),
     })
   } finally {
@@ -115,7 +120,7 @@ const confirmDelete = async (product) => {
   const result = await Swal.fire({
     icon: 'warning',
     title: 'Eliminar producto',
-    text: `¿Seguro que deseas eliminar el producto "${product.name}"?`,
+    text: `Se eliminará "${product.name}" del catálogo. ¿Deseas continuar?`,
     showCancelButton: true,
     confirmButtonText: 'Sí, eliminar',
     cancelButtonText: 'Cancelar',
@@ -139,7 +144,7 @@ const confirmDelete = async (product) => {
   } catch (error) {
     Swal.fire({
       icon: 'error',
-      title: 'Error al eliminar producto',
+      title: 'No fue posible eliminar el producto',
       text: getErrorMessage(error),
     })
   }
@@ -167,12 +172,11 @@ onBeforeUnmount(() => {
             </span>
 
             <h1 class="fw-bold mb-2">
-              Panel de productos
+              Productos e inventario
             </h1>
 
             <p class="text-white-50 mb-0">
-              Administra el inventario de tu aplicación: consulta productos, registra nuevos artículos,
-              actualiza información y elimina registros cuando sea necesario.
+              Consulta tu catálogo, revisa las existencias y mantén actualizada la información de tus productos.
             </p>
           </div>
 
@@ -204,7 +208,7 @@ onBeforeUnmount(() => {
           <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
               <div>
-                <p class="text-muted mb-1">Stock total</p>
+                <p class="text-muted mb-1">Unidades en inventario</p>
                 <h3 class="fw-bold mb-0">{{ totalStock }}</h3>
               </div>
 
@@ -219,7 +223,7 @@ onBeforeUnmount(() => {
           <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
               <div>
-                <p class="text-muted mb-1">Valor inventario</p>
+                <p class="text-muted mb-1">Valor potencial de venta</p>
                 <h3 class="fw-bold mb-0">{{ formatCurrency(totalInventoryValue) }}</h3>
               </div>
 
@@ -234,7 +238,7 @@ onBeforeUnmount(() => {
           <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
               <div>
-                <p class="text-muted mb-1">Stock bajo</p>
+                <p class="text-muted mb-1">Productos con pocas existencias</p>
                 <h3 class="fw-bold mb-0">{{ lowStockProducts }}</h3>
               </div>
 
@@ -251,7 +255,7 @@ onBeforeUnmount(() => {
           <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
             <div>
               <span class="badge text-bg-primary mb-2">
-                Listado principal
+                Catálogo
               </span>
 
               <h4 class="fw-bold mb-1">
@@ -259,7 +263,7 @@ onBeforeUnmount(() => {
               </h4>
 
               <p class="text-muted mb-0">
-                Información obtenida desde la API protegida con JWT.
+                Revisa los artículos registrados, sus precios y las existencias disponibles.
               </p>
             </div>
 
@@ -277,7 +281,7 @@ onBeforeUnmount(() => {
 
         <div class="card-body p-4">
           <div v-if="loading" class="alert alert-info border-0 rounded-4" role="status" aria-live="polite">
-            Cargando productos desde la API...
+            Consultando el catálogo de productos...
           </div>
 
           <div class="table-responsive">
@@ -289,7 +293,7 @@ onBeforeUnmount(() => {
                   <th>Producto</th>
                   <th>Precio</th>
                   <th>Descripción</th>
-                  <th>Stock</th>
+                  <th>Existencias</th>
                   <th width="190">Acciones</th>
                 </tr>
               </thead>
@@ -303,7 +307,9 @@ onBeforeUnmount(() => {
                   </td>
 
                   <td class="product-name-cell">
-                    {{ product.name }}
+                    <span :title="product.name">
+                      {{ product.name }}
+                    </span>
                   </td>
 
                   <td class="fw-semibold">
@@ -311,7 +317,9 @@ onBeforeUnmount(() => {
                   </td>
 
                   <td class="product-description-cell">
-                    {{ product.description || 'Sin descripción' }}
+                    <span :title="product.description || 'Sin descripción'">
+                      {{ product.description || 'Sin descripción' }}
+                    </span>
                   </td>
 
                   <td>

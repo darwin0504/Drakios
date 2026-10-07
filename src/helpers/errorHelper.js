@@ -1,6 +1,6 @@
 export function getErrorMessage(error) {
   if (!error.response) {
-    return "No se pudo conectar con el servidor. Verifica que el backend esté ejecutándose.";
+    return "No fue posible conectar con Drakios. Inténtalo nuevamente más tarde.";
   }
 
   const status = error.response.status;
