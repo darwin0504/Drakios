@@ -60,6 +60,13 @@ const initDataTable = async () => {
     responsive: true,
     pageLength: 10,
     ordering: true,
+    columnDefs: [
+      {
+        targets: -1,
+        orderable: false,
+        searchable: false,
+      },
+    ],
     language: {
       search: 'Buscar:',
       lengthMenu: 'Mostrar _MENU_ registros',
@@ -260,6 +267,7 @@ onBeforeUnmount(() => {
                   <th>Rol</th>
                   <th>Estado</th>
                   <th>Registro</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
 
@@ -303,6 +311,16 @@ onBeforeUnmount(() => {
 
                   <td>
                     {{ formatDate(user.createdAt) }}
+                  </td>
+
+                  <td>
+                    <div class="d-flex gap-2">
+                      <RouterLink :to="{ name: 'users-edit', params: { id: user.id } }" class="btn btn-soft-primary btn-sm action-btn"
+                        :aria-label="`Editar ${user.name}`">
+                        <i class="bi bi-pencil-square me-1" aria-hidden="true"></i>
+                        Editar
+                      </RouterLink>
+                    </div>
                   </td>
                 </tr>
               </tbody>
