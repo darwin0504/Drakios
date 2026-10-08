@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import authRoutes from "@/modules/auth/routes";
 import productRoutes from "@/modules/products/routes";
+import userRoutes from "@/modules/users/routes";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,6 +13,7 @@ const router = createRouter({
     },
   
     ...authRoutes,
+    ...userRoutes,
     ...productRoutes,
   ],
 });
