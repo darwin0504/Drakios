@@ -16,55 +16,42 @@ const viewName = 'Inicio de sesión'
 const email = ref('')
 const password = ref('')
 const loading = ref(false)
+const errors = ref({})
+const showPassword = ref(false)
 
 const validateForm = () => {
-  if (!email.value) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Correo requerido',
-      text: 'Ingresa tu correo electrónico.',
-    })
-
-    return false
-  }
-
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const newErrors = {}
 
-  if (!emailRegex.test(email.value)) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Correo inválido',
-      text: 'Ingresa un correo electrónico válido.',
-    })
-
-    return false
+  if (!email.value.trim()) {
+    newErrors.email = 'Ingresa tu correo electrónico.'
+  } else if (!emailRegex.test(email.value.trim())) {
+    newErrors.email = 'Ingresa un correo electrónico válido.'
   }
 
   if (!password.value) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Contraseña requerida',
-      text: 'Ingresa tu contraseña.',
-    })
-
-    return false
+    newErrors.password = 'Ingresa tu contraseña.'
+  } else if (password.value.length < 8) {
+    newErrors.password = 'La contraseña debe tener al menos 8 caracteres.'
   }
 
-  if (password.value.length < 8) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Contraseña inválida',
-      text: 'La contraseña debe tener al menos 8 caracteres.',
-    })
+  errors.value = newErrors
+  return Object.keys(newErrors).length === 0
+}
 
-    return false
+const clearFieldError = (field) => {
+  if (errors.value[field]) {
+    delete errors.value[field]
   }
-
-  return true
 }
 
 const login = async () => {
   if (!validateForm()) {
+    await Swal.fire({
+      icon: 'warning',
+      title: 'Revisa tus datos',
+      text: 'Corrige los campos indicados para continuar.',
+    })
     return
   }
 
@@ -178,14 +165,25 @@ const login = async () => {
                   </p>
                 </div>
 
-                <form @submit.prevent="login">
+                <form @submit.prevent="login" novalidate>
                   <div class="mb-3">
                     <label for="email" class="form-label fw-semibold">
                       Correo electrónico
                     </label>
 
-                    <input type="email" id="email" v-model.trim="email" class="form-control premium-input"
-                      placeholder="correo@empresa.com" autocomplete="email" />
+                    <div class="input-group has-validation">
+                      <span class="input-group-text" :class="{ 'is-invalid': errors.email }">
+                        <i class="bi bi-envelope"></i>
+                      </span>
+                      <input type="email" id="email" v-model.trim="email" class="form-control premium-input"
+                        :class="{ 'is-invalid': errors.email }" :aria-invalid="!!errors.email"
+                        :aria-describedby="errors.email ? 'login-email-error' : undefined"
+                        placeholder="correo@empresa.com" autocomplete="email" required
+                        @input="clearFieldError('email')" />
+                    </div>
+                    <div v-if="errors.email" id="login-email-error" class="invalid-feedback d-block">
+                      {{ errors.email }}
+                    </div>
                   </div>
 
                   <div class="mb-3">
@@ -193,8 +191,25 @@ const login = async () => {
                       Contraseña
                     </label>
 
-                    <input type="password" id="password" v-model="password" class="form-control premium-input"
-                      placeholder="Ingresa tu contraseña" autocomplete="current-password" />
+                    <div class="input-group has-validation password-input-group">
+                      <span class="input-group-text" :class="{ 'is-invalid': errors.password }">
+                        <i class="bi bi-lock"></i>
+                      </span>
+                      <input :type="showPassword ? 'text' : 'password'" id="password" v-model="password"
+                        class="form-control premium-input" :class="{ 'is-invalid': errors.password }"
+                        :aria-invalid="!!errors.password"
+                        :aria-describedby="errors.password ? 'login-password-error' : undefined"
+                        placeholder="Ingresa tu contraseña" autocomplete="current-password" required
+                        @input="clearFieldError('password')" />
+                      <button type="button" class="btn btn-outline-secondary password-toggle"
+                        :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                        :aria-pressed="showPassword" @click="showPassword = !showPassword">
+                        <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <div v-if="errors.password" id="login-password-error" class="invalid-feedback d-block">
+                      {{ errors.password }}
+                    </div>
                   </div>
 
                   <div class="auth-demo-box mb-4">

@@ -15,83 +15,58 @@ const currentPassword = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
 const loading = ref(false)
+const errors = ref({})
+const showCurrentPassword = ref(false)
+const showNewPassword = ref(false)
+const showConfirmPassword = ref(false)
 
 const validateForm = () => {
+    const newErrors = {}
+
     if (!currentPassword.value) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Contraseña actual requerida',
-            text: 'Ingresa tu contraseña actual.',
-        })
-
-        return false
-    }
-
-    if (currentPassword.value.length < 8) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Contraseña actual inválida',
-            text: 'La contraseña actual debe tener al menos 8 caracteres.',
-        })
-
-        return false
+        newErrors.currentPassword = 'Ingresa tu contraseña actual.'
+    } else if (currentPassword.value.length < 8) {
+        newErrors.currentPassword = 'La contraseña actual debe tener al menos 8 caracteres.'
     }
 
     if (!newPassword.value) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Nueva contraseña requerida',
-            text: 'Ingresa tu nueva contraseña.',
-        })
-
-        return false
-    }
-
-    if (newPassword.value.length < 8) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Nueva contraseña inválida',
-            text: 'La nueva contraseña debe tener al menos 8 caracteres.',
-        })
-
-        return false
+        newErrors.newPassword = 'Ingresa tu nueva contraseña.'
+    } else if (newPassword.value.length < 8) {
+        newErrors.newPassword = 'La nueva contraseña debe tener al menos 8 caracteres.'
     }
 
     if (!confirmPassword.value) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Confirma tu contraseña',
-            text: 'Vuelve a ingresar tu nueva contraseña.',
-        })
-
-        return false
+        newErrors.confirmPassword = 'Confirma tu nueva contraseña.'
+    } else if (newPassword.value !== confirmPassword.value) {
+        newErrors.confirmPassword = 'Las contraseñas no coinciden.'
     }
 
-    if (newPassword.value !== confirmPassword.value) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Las contraseñas no coinciden',
-            text: 'Verifica que ambas contraseñas nuevas sean iguales.',
-        })
-
-        return false
+    if (currentPassword.value && newPassword.value && currentPassword.value === newPassword.value) {
+        newErrors.newPassword = 'La nueva contraseña debe ser diferente a la contraseña actual.'
     }
 
-    if (currentPassword.value === newPassword.value) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Contraseña no permitida',
-            text: 'La nueva contraseña debe ser diferente a la contraseña actual.',
-        })
+    errors.value = newErrors
+    return Object.keys(newErrors).length === 0
+}
 
-        return false
+const clearFieldError = (field) => {
+    if (errors.value[field]) {
+        delete errors.value[field]
     }
+}
 
-    return true
+const handleNewPasswordInput = () => {
+    clearFieldError('newPassword')
+    clearFieldError('confirmPassword')
 }
 
 const changePassword = async () => {
     if (!validateForm()) {
+        await Swal.fire({
+            icon: 'warning',
+            title: 'Revisa el formulario',
+            text: 'Corrige los campos indicados para continuar.',
+        })
         return
     }
 
@@ -161,15 +136,36 @@ const cancel = () => {
                     </div>
                 </div>
 
-                <form @submit.prevent="changePassword">
+                <form @submit.prevent="changePassword" novalidate>
                     <div class="mb-3">
                         <label for="currentPassword" class="form-label fw-semibold">
                             Contraseña actual
                         </label>
 
-                        <input id="currentPassword" v-model="currentPassword" type="password"
-                            class="form-control premium-input" placeholder="Ingresa tu contraseña actual"
-                            autocomplete="current-password" :disabled="loading" />
+                        <div class="input-group has-validation password-input-group">
+                            <span class="input-group-text" :class="{ 'is-invalid': errors.currentPassword }">
+                                <i class="bi bi-lock"></i>
+                            </span>
+                            <input id="currentPassword" v-model="currentPassword"
+                                :type="showCurrentPassword ? 'text' : 'password'"
+                                class="form-control premium-input"
+                                :class="{ 'is-invalid': errors.currentPassword }"
+                                :aria-invalid="!!errors.currentPassword"
+                                :aria-describedby="errors.currentPassword ? 'current-password-error' : undefined"
+                                placeholder="Ingresa tu contraseña actual" autocomplete="current-password"
+                                :disabled="loading" required @input="clearFieldError('currentPassword')" />
+                            <button type="button" class="btn btn-outline-secondary password-toggle"
+                                :aria-label="showCurrentPassword ? 'Ocultar contraseña actual' : 'Mostrar contraseña actual'"
+                                :aria-pressed="showCurrentPassword"
+                                @click="showCurrentPassword = !showCurrentPassword">
+                                <i :class="showCurrentPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"
+                                    aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div v-if="errors.currentPassword" id="current-password-error"
+                            class="invalid-feedback d-block">
+                            {{ errors.currentPassword }}
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -177,10 +173,29 @@ const cancel = () => {
                             Nueva contraseña
                         </label>
 
-                        <input id="newPassword" v-model="newPassword" type="password" class="form-control premium-input"
-                            placeholder="Ingresa tu nueva contraseña" autocomplete="new-password" :disabled="loading" />
+                        <div class="input-group has-validation password-input-group">
+                            <span class="input-group-text" :class="{ 'is-invalid': errors.newPassword }">
+                                <i class="bi bi-shield-lock"></i>
+                            </span>
+                            <input id="newPassword" v-model="newPassword"
+                                :type="showNewPassword ? 'text' : 'password'"
+                                class="form-control premium-input" :class="{ 'is-invalid': errors.newPassword }"
+                                :aria-invalid="!!errors.newPassword"
+                                :aria-describedby="errors.newPassword ? 'new-password-error' : 'new-password-help'"
+                                placeholder="Ingresa tu nueva contraseña" autocomplete="new-password"
+                                :disabled="loading" required @input="handleNewPasswordInput" />
+                            <button type="button" class="btn btn-outline-secondary password-toggle"
+                                :aria-label="showNewPassword ? 'Ocultar nueva contraseña' : 'Mostrar nueva contraseña'"
+                                :aria-pressed="showNewPassword" @click="showNewPassword = !showNewPassword">
+                                <i :class="showNewPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"
+                                    aria-hidden="true"></i>
+                            </button>
+                        </div>
 
-                        <small class="text-muted">
+                        <div v-if="errors.newPassword" id="new-password-error" class="invalid-feedback d-block">
+                            {{ errors.newPassword }}
+                        </div>
+                        <small v-else id="new-password-help" class="form-text">
                             La contraseña debe tener al menos 8 caracteres.
                         </small>
                     </div>
@@ -190,9 +205,30 @@ const cancel = () => {
                             Confirmar nueva contraseña
                         </label>
 
-                        <input id="confirmPassword" v-model="confirmPassword" type="password"
-                            class="form-control premium-input" placeholder="Repite tu nueva contraseña"
-                            autocomplete="new-password" :disabled="loading" />
+                        <div class="input-group has-validation password-input-group">
+                            <span class="input-group-text" :class="{ 'is-invalid': errors.confirmPassword }">
+                                <i class="bi bi-shield-check"></i>
+                            </span>
+                            <input id="confirmPassword" v-model="confirmPassword"
+                                :type="showConfirmPassword ? 'text' : 'password'"
+                                class="form-control premium-input"
+                                :class="{ 'is-invalid': errors.confirmPassword }"
+                                :aria-invalid="!!errors.confirmPassword"
+                                :aria-describedby="errors.confirmPassword ? 'confirm-password-error' : undefined"
+                                placeholder="Repite tu nueva contraseña" autocomplete="new-password"
+                                :disabled="loading" required @input="clearFieldError('confirmPassword')" />
+                            <button type="button" class="btn btn-outline-secondary password-toggle"
+                                :aria-label="showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'"
+                                :aria-pressed="showConfirmPassword"
+                                @click="showConfirmPassword = !showConfirmPassword">
+                                <i :class="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"
+                                    aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div v-if="errors.confirmPassword" id="confirm-password-error"
+                            class="invalid-feedback d-block">
+                            {{ errors.confirmPassword }}
+                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-premium w-100" :disabled="loading">

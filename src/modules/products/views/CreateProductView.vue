@@ -18,6 +18,7 @@ const description = ref('')
 const quantity = ref('')
 
 const loading = ref(false)
+const errors = ref({})
 
 const previewName = computed(() => {
   return name.value.trim() || 'Nuevo producto'
@@ -68,56 +69,47 @@ const formatCurrency = (value) => {
 }
 
 const validateForm = () => {
-  if (!name.value.trim()) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Campo requerido',
-      text: 'Ingresa el nombre del producto.',
-    })
-    return false
+  const newErrors = {}
+  const productName = name.value.trim()
+
+  if (!productName) {
+    newErrors.name = 'El nombre del producto es obligatorio.'
+  } else if (productName.length < 2) {
+    newErrors.name = 'El nombre debe tener mínimo 2 caracteres.'
   }
 
-  if (name.value.trim().length < 2) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Nombre inválido',
-      text: 'El nombre debe tener mínimo 2 caracteres.',
-    })
-    return false
+  const productPrice = Number(price.value)
+  if (price.value === '' || !Number.isFinite(productPrice) || productPrice < 0) {
+    newErrors.price = 'Ingresa un precio válido mayor o igual a 0.'
   }
 
-  if (price.value === '' || Number(price.value) < 0) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Precio inválido',
-      text: 'Ingresa un precio mayor o igual a 0.',
-    })
-    return false
+  const productQuantity = Number(quantity.value)
+  if (quantity.value === '' || !Number.isFinite(productQuantity) || productQuantity < 0) {
+    newErrors.quantity = 'Ingresa una cantidad válida mayor o igual a 0.'
+  } else if (!Number.isInteger(productQuantity)) {
+    newErrors.quantity = 'La cantidad debe ser un número entero.'
   }
 
-  if (quantity.value === '' || Number(quantity.value) < 0) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Cantidad inválida',
-      text: 'Ingresa una cantidad mayor o igual a 0.',
-    })
-    return false
-  }
+  errors.value = newErrors
+  return Object.keys(newErrors).length === 0
+}
 
-  if (!Number.isInteger(Number(quantity.value))) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Cantidad inválida',
-      text: 'La cantidad debe ser un número entero.',
-    })
-    return false
+const clearFieldError = (field) => {
+  if (errors.value[field]) {
+    delete errors.value[field]
   }
-
-  return true
 }
 
 const saveProduct = async () => {
-  if (!validateForm()) return
+  if (!validateForm()) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Revisa el formulario',
+      text: 'Completa correctamente los campos obligatorios.',
+    })
+
+    return
+  }
 
   loading.value = true
 
@@ -178,7 +170,9 @@ const goBack = () => {
           </div>
 
           <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-            <button type="button" class="btn btn-hero-action btn-lg fw-semibold action-btn" @click="goBack">
+            <button type="button" class="btn btn-hero-action btn-lg fw-semibold action-btn" :disabled="loading"
+              @click="goBack">
+              <i class="bi bi-arrow-left me-1"></i>
               Volver al listado
             </button>
           </div>
@@ -203,43 +197,79 @@ const goBack = () => {
             </div>
 
             <div class="p-4">
-              <form @submit.prevent="saveProduct">
-                <div class="row">
-                  <div class="col-md-6 mb-3">
+              <form @submit.prevent="saveProduct" novalidate>
+                <div class="row g-4">
+                  <div class="col-md-6">
                     <label for="name" class="form-label fw-semibold">
                       Nombre del producto <span class="required-mark" aria-hidden="true">*</span>
                     </label>
 
-                    <input type="text" id="name" v-model="name" class="form-control premium-input"
-                      placeholder="Mouse inalámbrico" aria-required="true" />
+                    <div class="input-group has-validation">
+                      <span class="input-group-text" :class="{ 'is-invalid': errors.name }">
+                        <i class="bi bi-box-seam"></i>
+                      </span>
+                      <input type="text" id="name" v-model="name" class="form-control premium-input"
+                        :class="{ 'is-invalid': errors.name }" :aria-invalid="!!errors.name"
+                        :aria-describedby="errors.name ? 'product-name-error' : undefined"
+                        placeholder="Mouse inalámbrico" autocomplete="off" maxlength="180" aria-required="true"
+                        @input="clearFieldError('name')" />
+                    </div>
+                    <div v-if="errors.name" id="product-name-error" class="invalid-feedback d-block">
+                      {{ errors.name }}
+                    </div>
                   </div>
 
-                  <div class="col-md-3 mb-3">
+                  <div class="col-md-3">
                     <label for="price" class="form-label fw-semibold">
                       Precio <span class="required-mark" aria-hidden="true">*</span>
                     </label>
 
-                    <input type="number" id="price" v-model="price" class="form-control premium-input" min="0"
-                      step="0.01" placeholder="59.90" aria-required="true" />
+                    <div class="input-group has-validation">
+                      <span class="input-group-text" :class="{ 'is-invalid': errors.price }">
+                        <i class="bi bi-currency-dollar"></i>
+                      </span>
+                      <input type="number" id="price" v-model="price" class="form-control premium-input"
+                        :class="{ 'is-invalid': errors.price }" :aria-invalid="!!errors.price"
+                        :aria-describedby="errors.price ? 'product-price-error' : undefined" min="0" step="0.01"
+                        placeholder="59.90" aria-required="true" @input="clearFieldError('price')" />
+                    </div>
+                    <div v-if="errors.price" id="product-price-error" class="invalid-feedback d-block">
+                      {{ errors.price }}
+                    </div>
                   </div>
 
-                  <div class="col-md-3 mb-3">
+                  <div class="col-md-3">
                     <label for="quantity" class="form-label fw-semibold">
                       Existencias iniciales <span class="required-mark" aria-hidden="true">*</span>
                     </label>
 
-                    <input type="number" id="quantity" v-model="quantity" class="form-control premium-input" min="0"
-                      step="1" placeholder="20" aria-required="true" />
+                    <div class="input-group has-validation">
+                      <span class="input-group-text" :class="{ 'is-invalid': errors.quantity }">
+                        <i class="bi bi-stack"></i>
+                      </span>
+                      <input type="number" id="quantity" v-model="quantity" class="form-control premium-input"
+                        :class="{ 'is-invalid': errors.quantity }" :aria-invalid="!!errors.quantity"
+                        :aria-describedby="errors.quantity ? 'product-quantity-error' : undefined" min="0" step="1"
+                        placeholder="20" aria-required="true" @input="clearFieldError('quantity')" />
+                    </div>
+                    <div v-if="errors.quantity" id="product-quantity-error" class="invalid-feedback d-block">
+                      {{ errors.quantity }}
+                    </div>
                   </div>
 
-                  <div class="col-md-12 mb-3">
+                  <div class="col-md-12">
                     <label for="description" class="form-label fw-semibold">
                       Descripción
                       <small class="text-muted fw-normal">(opcional)</small>
                     </label>
 
-                    <textarea id="description" v-model="description" class="form-control premium-input" rows="5"
-                      placeholder="Describe las características principales del producto"></textarea>
+                    <div class="input-group align-items-stretch">
+                      <span class="input-group-text align-items-start pt-3">
+                        <i class="bi bi-card-text"></i>
+                      </span>
+                      <textarea id="description" v-model="description" class="form-control premium-input" rows="5"
+                        placeholder="Describe las características principales del producto"></textarea>
+                    </div>
                   </div>
                 </div>
 
@@ -249,7 +279,9 @@ const goBack = () => {
                 </div>
 
                 <div class="d-flex flex-column flex-md-row justify-content-end gap-2">
-                  <button type="button" class="btn btn-outline-secondary btn-form-cancel" @click="goBack">
+                  <button type="button" class="btn btn-outline-secondary btn-form-cancel" :disabled="loading"
+                    @click="goBack">
+                    <i class="bi bi-x-lg me-1"></i>
                     Cancelar
                   </button>
 
@@ -257,6 +289,7 @@ const goBack = () => {
                     <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
                       aria-hidden="true"></span>
 
+                    <i v-else class="bi bi-box-seam me-1"></i>
                     {{ loading ? 'Guardando producto...' : 'Guardar producto' }}
                   </button>
                 </div>

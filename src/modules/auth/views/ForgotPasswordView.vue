@@ -11,38 +11,34 @@ const router = useRouter()
 
 const email = ref('')
 const loading = ref(false)
+const emailError = ref('')
 
 const validateForm = () => {
     const emailValue = email.value.trim()
 
     if (!emailValue) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Correo requerido',
-            text: 'Ingresa tu correo electrónico.',
-        })
-
+        emailError.value = 'Ingresa tu correo electrónico.'
         return false
     }
 
-    const emailRegex =
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     if (!emailRegex.test(emailValue)) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Correo inválido',
-            text: 'Ingresa un correo electrónico válido.',
-        })
-
+        emailError.value = 'Ingresa un correo electrónico válido.'
         return false
     }
 
+    emailError.value = ''
     return true
 }
 
 const submitRequest = async () => {
     if (!validateForm()) {
+        await Swal.fire({
+            icon: 'warning',
+            title: 'Revisa el correo',
+            text: emailError.value,
+        })
         return
     }
 
@@ -94,12 +90,23 @@ const goToLogin = () => {
                     </p>
                 </div>
 
-                <form @submit.prevent="submitRequest">
+                <form @submit.prevent="submitRequest" novalidate>
                     <div class="mb-3">
                         <label for="email" class="form-label fw-semibold">Correo electrónico</label>
 
-                        <input id="email" v-model.trim="email" type="email" class="form-control premium-input"
-                            placeholder="correo@ejemplo.com" autocomplete="email" :disabled="loading" />
+                        <div class="input-group has-validation">
+                            <span class="input-group-text" :class="{ 'is-invalid': emailError }">
+                                <i class="bi bi-envelope"></i>
+                            </span>
+                            <input id="email" v-model.trim="email" type="email"
+                                class="form-control premium-input" :class="{ 'is-invalid': emailError }"
+                                :aria-invalid="!!emailError" :aria-describedby="emailError ? 'forgot-email-error' : undefined"
+                                placeholder="correo@ejemplo.com" autocomplete="email" :disabled="loading" required
+                                @input="emailError = ''" />
+                        </div>
+                        <div v-if="emailError" id="forgot-email-error" class="invalid-feedback d-block">
+                            {{ emailError }}
+                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-premium w-100" :disabled="loading">

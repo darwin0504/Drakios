@@ -13,6 +13,9 @@ const router = useRouter()
 const password = ref('')
 const confirmPassword = ref('')
 const loading = ref(false)
+const errors = ref({})
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
 
 const token = computed(() => {
     const value = route.query.token
@@ -25,6 +28,8 @@ const token = computed(() => {
 })
 
 const validateForm = () => {
+    const newErrors = {}
+
     if (!token.value) {
         Swal.fire({
             icon: 'error',
@@ -36,50 +41,41 @@ const validateForm = () => {
     }
 
     if (!password.value) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Contraseña requerida',
-            text: 'Ingresa tu nueva contraseña.',
-        })
-
-        return false
-    }
-
-    if (password.value.length < 8) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Contraseña inválida',
-            text: 'La contraseña debe tener al menos 8 caracteres.',
-        })
-
-        return false
+        newErrors.password = 'Ingresa tu nueva contraseña.'
+    } else if (password.value.length < 8) {
+        newErrors.password = 'La contraseña debe tener al menos 8 caracteres.'
     }
 
     if (!confirmPassword.value) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Confirma tu contraseña',
-            text: 'Vuelve a ingresar tu nueva contraseña.',
-        })
-
-        return false
+        newErrors.confirmPassword = 'Confirma tu nueva contraseña.'
+    } else if (password.value !== confirmPassword.value) {
+        newErrors.confirmPassword = 'Las contraseñas no coinciden.'
     }
 
-    if (password.value !== confirmPassword.value) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Las contraseñas no coinciden',
-            text: 'Verifica que ambas contraseñas sean iguales.',
-        })
+    errors.value = newErrors
+    return Object.keys(newErrors).length === 0
+}
 
-        return false
+const clearFieldError = (field) => {
+    if (errors.value[field]) {
+        delete errors.value[field]
     }
+}
 
-    return true
+const handlePasswordInput = () => {
+    clearFieldError('password')
+    clearFieldError('confirmPassword')
 }
 
 const resetPassword = async () => {
     if (!validateForm()) {
+        if (Object.keys(errors.value).length) {
+            await Swal.fire({
+                icon: 'warning',
+                title: 'Revisa el formulario',
+                text: 'Corrige los campos indicados para continuar.',
+            })
+        }
         return
     }
 
@@ -141,16 +137,33 @@ const requestNewLink = () => {
                     </div>
                 </div>
 
-                <form v-else @submit.prevent="resetPassword">
+                <form v-else @submit.prevent="resetPassword" novalidate>
                     <div class="mb-3">
                         <label for="password" class="form-label fw-semibold">
                             Nueva contraseña
                         </label>
 
-                        <input id="password" v-model="password" type="password" class="form-control premium-input"
-                            placeholder="Ingresa tu nueva contraseña" autocomplete="new-password" :disabled="loading" />
+                        <div class="input-group has-validation password-input-group">
+                            <span class="input-group-text" :class="{ 'is-invalid': errors.password }">
+                                <i class="bi bi-lock"></i>
+                            </span>
+                            <input id="password" v-model="password"
+                                :type="showPassword ? 'text' : 'password'" class="form-control premium-input"
+                                :class="{ 'is-invalid': errors.password }" :aria-invalid="!!errors.password"
+                                :aria-describedby="errors.password ? 'reset-password-error' : 'reset-password-help'"
+                                placeholder="Ingresa tu nueva contraseña" autocomplete="new-password"
+                                :disabled="loading" required @input="handlePasswordInput" />
+                            <button type="button" class="btn btn-outline-secondary password-toggle"
+                                :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                                :aria-pressed="showPassword" @click="showPassword = !showPassword">
+                                <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div v-if="errors.password" id="reset-password-error" class="invalid-feedback d-block">
+                            {{ errors.password }}
+                        </div>
 
-                        <small class="text-muted">
+                        <small v-else id="reset-password-help" class="form-text">
                             La contraseña debe tener al menos 8 caracteres.
                         </small>
                     </div>
@@ -160,9 +173,29 @@ const requestNewLink = () => {
                             Confirmar contraseña
                         </label>
 
-                        <input id="confirmPassword" v-model="confirmPassword" type="password"
-                            class="form-control premium-input" placeholder="Repite tu nueva contraseña"
-                            autocomplete="new-password" :disabled="loading" />
+                        <div class="input-group has-validation password-input-group">
+                            <span class="input-group-text" :class="{ 'is-invalid': errors.confirmPassword }">
+                                <i class="bi bi-shield-lock"></i>
+                            </span>
+                            <input id="confirmPassword" v-model="confirmPassword"
+                                :type="showConfirmPassword ? 'text' : 'password'"
+                                class="form-control premium-input" :class="{ 'is-invalid': errors.confirmPassword }"
+                                :aria-invalid="!!errors.confirmPassword"
+                                :aria-describedby="errors.confirmPassword ? 'reset-confirm-error' : undefined"
+                                placeholder="Repite tu nueva contraseña" autocomplete="new-password"
+                                :disabled="loading" required @input="clearFieldError('confirmPassword')" />
+                            <button type="button" class="btn btn-outline-secondary password-toggle"
+                                :aria-label="showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'"
+                                :aria-pressed="showConfirmPassword"
+                                @click="showConfirmPassword = !showConfirmPassword">
+                                <i :class="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"
+                                    aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div v-if="errors.confirmPassword" id="reset-confirm-error"
+                            class="invalid-feedback d-block">
+                            {{ errors.confirmPassword }}
+                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-premium w-100" :disabled="loading">

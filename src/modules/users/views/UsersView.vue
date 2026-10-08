@@ -137,9 +137,10 @@ onBeforeUnmount(() => {
           </div>
 
           <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-            <span class="badge text-bg-primary fs-6 px-3 py-2">
-              Administración
-            </span>
+            <RouterLink to="/users/create" class="btn btn-hero-action btn-lg fw-semibold action-btn">
+              <i class="bi bi-person-plus me-1"></i>
+              Crear usuario
+            </RouterLink>
           </div>
         </div>
       </section>

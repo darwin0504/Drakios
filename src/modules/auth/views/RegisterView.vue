@@ -18,96 +18,66 @@ const passwordConfirmation = ref('')
 const address = ref('')
 
 const loading = ref(false)
+const errors = ref({})
+const showPassword = ref(false)
+const showPasswordConfirmation = ref(false)
 
 const validateForm = () => {
-  if (!name.value.trim()) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Campo requerido',
-      text: 'Ingresa tu nombre.',
-    })
-    return false
-  }
-
-  if (name.value.trim().length < 3) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Nombre inválido',
-      text: 'El nombre debe tener mínimo 3 caracteres.',
-    })
-    return false
-  }
-
-  if (!email.value.trim()) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Campo requerido',
-      text: 'Ingresa tu correo electrónico.',
-    })
-    return false
-  }
-
+  const newErrors = {}
+  const userName = name.value.trim()
+  const userEmail = email.value.trim()
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-  if (!emailRegex.test(email.value.trim())) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Correo inválido',
-      text: 'Ingresa un correo electrónico válido.',
-    })
-    return false
+  if (!userName) {
+    newErrors.name = 'Ingresa tu nombre.'
+  } else if (userName.length < 3) {
+    newErrors.name = 'El nombre debe tener mínimo 3 caracteres.'
+  }
+
+  if (!userEmail) {
+    newErrors.email = 'Ingresa tu correo electrónico.'
+  } else if (!emailRegex.test(userEmail)) {
+    newErrors.email = 'Ingresa un correo electrónico válido.'
   }
 
   if (!password.value.trim()) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Campo requerido',
-      text: 'Ingresa una contraseña.',
-    })
-    return false
-  }
-
-  if (password.value.trim().length < 8) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Contraseña inválida',
-      text: 'La contraseña debe tener mínimo 8 caracteres.',
-    })
-    return false
-  }
-
-  if (!/[0-9]/.test(password.value)) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Contraseña inválida',
-      text: 'La contraseña debe contener al menos un número.',
-    })
-    return false
+    newErrors.password = 'Ingresa una contraseña.'
+  } else if (password.value.length < 8) {
+    newErrors.password = 'La contraseña debe tener mínimo 8 caracteres.'
+  } else if (!/[0-9]/.test(password.value)) {
+    newErrors.password = 'La contraseña debe contener al menos un número.'
   }
 
   if (!passwordConfirmation.value) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Campo requerido',
-      text: 'Confirma tu contraseña.',
-    })
-    return false
+    newErrors.passwordConfirmation = 'Confirma tu contraseña.'
+  } else if (password.value !== passwordConfirmation.value) {
+    newErrors.passwordConfirmation = 'Las contraseñas no coinciden.'
   }
 
-  if (password.value !== passwordConfirmation.value) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Contraseñas no coinciden',
-      text: 'Las contraseñas ingresadas no coinciden.',
-    })
-    return false
-  }
+  errors.value = newErrors
+  return Object.keys(newErrors).length === 0
+}
 
-  return true
+const clearFieldError = (field) => {
+  if (errors.value[field]) {
+    delete errors.value[field]
+  }
+}
+
+const handlePasswordInput = () => {
+  clearFieldError('password')
+  clearFieldError('passwordConfirmation')
 }
 
 const registerUser = async () => {
-  if (!validateForm()) return
+  if (!validateForm()) {
+    await Swal.fire({
+      icon: 'warning',
+      title: 'Revisa el formulario',
+      text: 'Corrige los campos indicados para crear tu cuenta.',
+    })
+    return
+  }
 
   loading.value = true
 
@@ -244,14 +214,25 @@ const goToLogin = () => {
                   </p>
                 </div>
 
-                <form @submit.prevent="registerUser">
+                <form @submit.prevent="registerUser" novalidate>
                   <div class="mb-3">
                     <label for="name" class="form-label fw-semibold">
                       Nombre completo
                     </label>
 
-                    <input type="text" id="name" v-model.trim="name" class="form-control premium-input"
-                      placeholder="Nombre y apellido" autocomplete="name" required />
+                    <div class="input-group has-validation">
+                      <span class="input-group-text" :class="{ 'is-invalid': errors.name }">
+                        <i class="bi bi-person"></i>
+                      </span>
+                      <input type="text" id="name" v-model.trim="name" class="form-control premium-input"
+                        :class="{ 'is-invalid': errors.name }" :aria-invalid="!!errors.name"
+                        :aria-describedby="errors.name ? 'register-name-error' : undefined"
+                        placeholder="Nombre y apellido" autocomplete="name" maxlength="150" required
+                        @input="clearFieldError('name')" />
+                    </div>
+                    <div v-if="errors.name" id="register-name-error" class="invalid-feedback d-block">
+                      {{ errors.name }}
+                    </div>
                   </div>
 
                   <div class="mb-3">
@@ -259,8 +240,19 @@ const goToLogin = () => {
                       Correo electrónico
                     </label>
 
-                    <input type="email" id="email" v-model.trim="email" class="form-control premium-input"
-                      placeholder="nombre@empresa.com" autocomplete="email" required />
+                    <div class="input-group has-validation">
+                      <span class="input-group-text" :class="{ 'is-invalid': errors.email }">
+                        <i class="bi bi-envelope"></i>
+                      </span>
+                      <input type="email" id="email" v-model.trim="email" class="form-control premium-input"
+                        :class="{ 'is-invalid': errors.email }" :aria-invalid="!!errors.email"
+                        :aria-describedby="errors.email ? 'register-email-error' : undefined"
+                        placeholder="nombre@empresa.com" autocomplete="email" maxlength="180" required
+                        @input="clearFieldError('email')" />
+                    </div>
+                    <div v-if="errors.email" id="register-email-error" class="invalid-feedback d-block">
+                      {{ errors.email }}
+                    </div>
                   </div>
 
                   <div class="mb-3">
@@ -268,8 +260,28 @@ const goToLogin = () => {
                       Contraseña
                     </label>
 
-                    <input type="password" id="password" v-model.trim="password" class="form-control premium-input"
-                      placeholder="Mínimo 8 caracteres" autocomplete="new-password" required />
+                    <div class="input-group has-validation password-input-group">
+                      <span class="input-group-text" :class="{ 'is-invalid': errors.password }">
+                        <i class="bi bi-lock"></i>
+                      </span>
+                      <input :type="showPassword ? 'text' : 'password'" id="password" v-model="password"
+                        class="form-control premium-input" :class="{ 'is-invalid': errors.password }"
+                        :aria-invalid="!!errors.password"
+                        :aria-describedby="errors.password ? 'register-password-error' : 'register-password-help'"
+                        placeholder="Mínimo 8 caracteres" autocomplete="new-password" required
+                        @input="handlePasswordInput" />
+                      <button type="button" class="btn btn-outline-secondary password-toggle"
+                        :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                        :aria-pressed="showPassword" @click="showPassword = !showPassword">
+                        <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <div v-if="errors.password" id="register-password-error" class="invalid-feedback d-block">
+                      {{ errors.password }}
+                    </div>
+                    <div v-else id="register-password-help" class="form-text">
+                      Mínimo 8 caracteres y un número.
+                    </div>
                   </div>
 
                   <div class="mb-3">
@@ -277,9 +289,29 @@ const goToLogin = () => {
                       Confirmar contraseña
                     </label>
 
-                    <input type="password" id="passwordConfirmation" v-model="passwordConfirmation"
-                      class="form-control premium-input" placeholder="Repite tu contraseña" autocomplete="new-password"
-                      required />
+                    <div class="input-group has-validation password-input-group">
+                      <span class="input-group-text" :class="{ 'is-invalid': errors.passwordConfirmation }">
+                        <i class="bi bi-shield-lock"></i>
+                      </span>
+                      <input :type="showPasswordConfirmation ? 'text' : 'password'" id="passwordConfirmation"
+                        v-model="passwordConfirmation" class="form-control premium-input"
+                        :class="{ 'is-invalid': errors.passwordConfirmation }"
+                        :aria-invalid="!!errors.passwordConfirmation"
+                        :aria-describedby="errors.passwordConfirmation ? 'register-confirmation-error' : undefined"
+                        placeholder="Repite tu contraseña" autocomplete="new-password" required
+                        @input="clearFieldError('passwordConfirmation')" />
+                      <button type="button" class="btn btn-outline-secondary password-toggle"
+                        :aria-label="showPasswordConfirmation ? 'Ocultar confirmación de contraseña' : 'Mostrar confirmación de contraseña'"
+                        :aria-pressed="showPasswordConfirmation"
+                        @click="showPasswordConfirmation = !showPasswordConfirmation">
+                        <i :class="showPasswordConfirmation ? 'bi bi-eye-slash' : 'bi bi-eye'"
+                          aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <div v-if="errors.passwordConfirmation" id="register-confirmation-error"
+                      class="invalid-feedback d-block">
+                      {{ errors.passwordConfirmation }}
+                    </div>
                   </div>
 
                   <div class="mb-3">
@@ -288,8 +320,13 @@ const goToLogin = () => {
                       <small class="text-muted fw-normal">(opcional)</small>
                     </label>
 
-                    <input type="text" id="address" v-model.trim="address" class="form-control premium-input"
-                      placeholder="Bogota, Colombia" />
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-geo-alt"></i>
+                      </span>
+                      <input type="text" id="address" v-model.trim="address" class="form-control premium-input"
+                        placeholder="Bogota, Colombia" autocomplete="street-address" maxlength="255" />
+                    </div>
                   </div>
 
                   <div class="auth-register-box mb-4">

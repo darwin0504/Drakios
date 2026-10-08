@@ -6,6 +6,12 @@ const userService = {
 
     return response.data;
   },
+
+  async create(data) {
+    const response = await api.post('/users', data)
+
+    return response.data
+  },
 };
 
 export default userService;
