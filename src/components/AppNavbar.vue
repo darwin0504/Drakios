@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { Offcanvas } from 'bootstrap'
 import Swal from 'sweetalert2'
 import { useAuthStore } from '@/modules/auth/stores/authStore'
 import { authService } from '@/modules/auth/services/authService'
@@ -8,6 +9,7 @@ import { authService } from '@/modules/auth/services/authService'
 const router = useRouter()
 const authStore = useAuthStore()
 const appName = 'Drakios'
+const modulesOffcanvas = ref(null)
 
 const userName = computed(() => {
   return authStore.user?.name || 'Usuario'
@@ -38,6 +40,22 @@ const navigateFromAccount = async (path) => {
 const goToProfile = () => navigateFromAccount('/profile')
 const goToChangePassword = () => navigateFromAccount('/change-password')
 const goToSettings = () => navigateFromAccount('/settings')
+
+const navigateToModule = async (path) => {
+  const element = modulesOffcanvas.value
+  const offcanvas = Offcanvas.getInstance(element)
+
+  if (offcanvas && element.classList.contains('show')) {
+    const hidden = new Promise((resolve) => {
+      element.addEventListener('hidden.bs.offcanvas', resolve, { once: true })
+    })
+
+    offcanvas.hide()
+    await hidden
+  }
+
+  await router.push(path)
+}
 
 const logout = async () => {
   const result = await Swal.fire({
@@ -84,71 +102,154 @@ const logout = async () => {
         </div>
       </RouterLink>
 
-      <!-- Main navigation toggle -->
-      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
-        data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Mostrar menú">
-        <span class="navbar-toggler-icon"></span>
+      <!-- Modules trigger -->
+      <button type="button" class="modules-trigger" data-bs-toggle="offcanvas" data-bs-target="#modulesOffcanvas"
+        aria-controls="modulesOffcanvas" aria-label="Abrir módulos">
+        <i class="bi bi-grid"></i>
+        <span>Módulos</span>
       </button>
 
-      <!-- Main navigation -->
-      <div id="navbarContent" class="collapse navbar-collapse">
-        <ul class="navbar-nav mx-lg-auto mb-2 mb-lg-0 gap-lg-2 mt-3 mt-lg-0">
-          <li class="nav-item">
-            <RouterLink class="nav-link premium-nav-link" to="/products">
-              <i class="bi bi-box-seam me-1"></i>
-              Productos
-            </RouterLink>
-          </li>
+      <!-- Account dropdown -->
+      <div class="dropdown account-dropdown">
+        <button id="accountMenuToggle" type="button" class="account-trigger" data-bs-toggle="dropdown"
+          aria-expanded="false" aria-label="Abrir menú de cuenta">
+          <span class="account-trigger-avatar">
+            {{ userInitials }}
+          </span>
 
-          <li class="nav-item">
-            <RouterLink class="nav-link premium-nav-link" to="/products/create">
-              <i class="bi bi-plus-circle me-1"></i>
-              Nuevo producto
-            </RouterLink>
-          </li>
-        </ul>
+          <span class="account-trigger-info">
+            <span class="account-trigger-name">
+              {{ userName }}
+            </span>
+
+            <span class="account-trigger-email">
+              {{ userEmail }}
+            </span>
+          </span>
+
+          <span class="account-trigger-chevron">
+            <i class="bi bi-chevron-down"></i>
+          </span>
+        </button>
+
+        <div class="dropdown-menu dropdown-menu-end account-dropdown-menu" aria-labelledby="accountMenuToggle">
+          <div class="account-profile-card">
+            <div class="account-profile-avatar">
+              {{ userInitials }}
+            </div>
+
+            <div class="account-profile-info">
+              <div class="account-profile-name">
+                {{ userName }}
+              </div>
+
+              <div class="account-profile-email">
+                {{ userEmail }}
+              </div>
+
+              <div class="account-profile-status">
+                <span class="account-status-dot"></span>
+                Cuenta activa
+              </div>
+            </div>
+          </div>
+
+          <div class="account-section-label">
+            CUENTA
+          </div>
+
+          <button type="button" class="account-menu-item" @click="goToProfile">
+            <span class="account-menu-icon">
+              <i class="bi bi-person"></i>
+            </span>
+
+            <span class="account-menu-content">
+              <span class="account-menu-title">
+                Mi perfil
+              </span>
+
+              <span class="account-menu-description">
+                Consulta tu información personal
+              </span>
+            </span>
+
+            <span class="account-menu-arrow">
+              <i class="bi bi-chevron-right"></i>
+            </span>
+          </button>
+
+          <button type="button" class="account-menu-item" @click="goToChangePassword">
+            <span class="account-menu-icon">
+              <i class="bi bi-shield-lock"></i>
+            </span>
+
+            <span class="account-menu-content">
+              <span class="account-menu-title">
+                Cambiar contraseña
+              </span>
+
+              <span class="account-menu-description">
+                Actualiza la contraseña de tu cuenta
+              </span>
+            </span>
+
+            <span class="account-menu-arrow">
+              <i class="bi bi-chevron-right"></i>
+            </span>
+          </button>
+
+          <button type="button" class="account-menu-item" @click="goToSettings">
+            <span class="account-menu-icon">
+              <i class="bi bi-gear"></i>
+            </span>
+
+            <span class="account-menu-content">
+              <span class="account-menu-title">
+                Configuración
+              </span>
+
+              <span class="account-menu-description">
+                Administra las preferencias de tu cuenta
+              </span>
+            </span>
+
+            <span class="account-menu-arrow">
+              <i class="bi bi-chevron-right"></i>
+            </span>
+          </button>
+
+          <div class="account-dropdown-divider"></div>
+
+          <button type="button" class="account-logout-button" @click="logout">
+            <span class="account-logout-icon">
+              <i class="bi bi-box-arrow-right"></i>
+            </span>
+
+            <span>
+              Cerrar sesión
+            </span>
+          </button>
+        </div>
       </div>
-
-      <!-- Account trigger -->
-      <button type="button" class="account-trigger" data-bs-toggle="offcanvas" data-bs-target="#userAccountOffcanvas"
-        aria-controls="userAccountOffcanvas" aria-label="Abrir menú de cuenta">
-        <span class="account-trigger-avatar">
-          {{ userInitials }}
-        </span>
-
-        <span class="account-trigger-info">
-          <span class="account-trigger-name">
-            {{ userName }}
-          </span>
-
-          <span class="account-trigger-email">
-            {{ userEmail }}
-          </span>
-        </span>
-
-        <span class="account-trigger-chevron">
-          <i class="bi bi-chevron-down"></i>
-        </span>
-      </button>
     </div>
   </nav>
 
-  <!-- User account offcanvas -->
-  <div id="userAccountOffcanvas" ref="accountOffcanvas" class="offcanvas offcanvas-start user-account-offcanvas"
-    tabindex="-1" data-bs-scroll="true" data-bs-backdrop="false" aria-labelledby="userAccountOffcanvasLabel">
+  <!-- Modules menu -->
+  <div id="modulesOffcanvas" ref="modulesOffcanvas" class="offcanvas offcanvas-start app-menu-offcanvas"
+    tabindex="-1" aria-labelledby="modulesOffcanvasLabel">
     <!-- Header -->
     <div class="offcanvas-header account-offcanvas-header">
       <div>
         <div class="account-offcanvas-kicker">
-          CUENTA
+          ESPACIO DE TRABAJO
         </div>
 
-        <h5 id="userAccountOffcanvasLabel" class="account-offcanvas-title">
-          Mi cuenta
+        <h5 id="modulesOffcanvasLabel" class="account-offcanvas-title">
+          Centro de módulos
         </h5>
 
         <p class="account-offcanvas-subtitle">
-          Consulta tu perfil y administra la seguridad de tu cuenta
+          Accede a las herramientas de gestión de Drakios.
         </p>
       </div>
 
@@ -158,137 +259,57 @@ const logout = async () => {
     </div>
 
     <!-- Body -->
-    <div class="offcanvas-body account-offcanvas-body">
+    <div class="offcanvas-body account-offcanvas-body modules-offcanvas-body">
 
-      <!-- User profile -->
-      <div class="account-profile-card">
-        <div class="account-profile-avatar">
-          {{ userInitials }}
-        </div>
-
-        <div class="account-profile-info">
-          <div class="account-profile-name">
-            {{ userName }}
-          </div>
-
-          <div class="account-profile-email">
-            {{ userEmail }}
-          </div>
-
-          <div class="account-profile-status">
-            <span class="account-status-dot"></span>
-            Cuenta activa
-          </div>
-        </div>
-      </div>
-
-      <!-- Account section -->
-      <section class="account-menu-section">
+      <!-- Modules -->
+      <section class="account-menu-section modules-menu-section">
         <div class="account-section-label">
-          CUENTA
+          GESTIÓN COMERCIAL
         </div>
 
-        <!-- Profile -->
-        <button type="button" class="account-menu-item" @click="goToProfile">
+        <RouterLink class="account-menu-item account-module-item" to="/products" exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/products')">
           <span class="account-menu-icon">
-            <i class="bi bi-person"></i>
+            <i class="bi bi-box-seam"></i>
           </span>
 
           <span class="account-menu-content">
             <span class="account-menu-title">
-              Mi perfil
+              Productos
             </span>
 
             <span class="account-menu-description">
-              Consulta tu información personal
+              Consulta y administra el catálogo de productos.
             </span>
           </span>
 
           <span class="account-menu-arrow">
-            <i class="bi bi-chevron-right"></i>
+            <i class="bi bi-arrow-up-right"></i>
           </span>
-        </button>
+        </RouterLink>
 
-        <!-- Change password -->
-        <button type="button" class="account-menu-item" @click="goToChangePassword">
+        <RouterLink class="account-menu-item account-module-item" to="/users" exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/users')">
           <span class="account-menu-icon">
-            <i class="bi bi-shield-lock"></i>
+            <i class="bi bi-people"></i>
           </span>
 
           <span class="account-menu-content">
             <span class="account-menu-title">
-              Cambiar contraseña
+              Usuarios
             </span>
 
             <span class="account-menu-description">
-              Actualiza la contraseña de tu cuenta
+              Consulta los usuarios y el estado de sus cuentas.
             </span>
           </span>
 
           <span class="account-menu-arrow">
-            <i class="bi bi-chevron-right"></i>
+            <i class="bi bi-arrow-up-right"></i>
           </span>
-        </button>
-
-        <!-- Settings -->
-        <button type="button" class="account-menu-item" @click="goToSettings">
-          <span class="account-menu-icon">
-            <i class="bi bi-gear"></i>
-          </span>
-
-          <span class="account-menu-content">
-            <span class="account-menu-title">
-              Configuración
-            </span>
-
-            <span class="account-menu-description">
-              Administra las preferencias de tu cuenta
-            </span>
-          </span>
-
-          <span class="account-menu-arrow">
-            <i class="bi bi-chevron-right"></i>
-          </span>
-        </button>
+        </RouterLink>
       </section>
-
-      <!-- Security section -->
-      <section class="account-menu-section account-security-section">
-        <div class="account-section-label">
-          SEGURIDAD
-        </div>
-
-        <button type="button" class="account-menu-item account-menu-item-disabled" disabled>
-          <span class="account-menu-icon">
-            <i class="bi bi-shield-check"></i>
-          </span>
-
-          <span class="account-menu-content">
-            <span class="account-menu-title">
-              Seguridad
-            </span>
-
-            <span class="account-menu-description">
-              Próximamente disponible
-            </span>
-          </span>
-        </button>
-      </section>
-
-      <!-- Logout -->
-      <div class="account-logout-wrapper">
-        <button type="button" class="account-logout-button" @click="logout">
-          <span class="account-logout-icon">
-            <i class="bi bi-box-arrow-right"></i>
-          </span>
-
-          <span>
-            Cerrar sesión
-          </span>
-        </button>
-      </div>
     </div>
   </div>
+
 </template>
 
 <style scoped>
@@ -346,34 +367,46 @@ const logout = async () => {
   color: #94a3b8;
 }
 
-.premium-nav-link {
-  color: #cbd5e1 !important;
-  font-weight: 600;
-  border-radius: 999px;
-  padding: 8px 14px !important;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
-}
-
-.premium-nav-link:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff !important;
-}
-
-.premium-nav-link.router-link-active {
-  background: rgba(57, 140, 245, 0.23);
-  color: #e0f1ff !important;
-  box-shadow: inset 0 0 0 1px rgba(145, 208, 255, 0.36), 0 0 17px rgba(57, 140, 245, 0.2);
-}
-
 /* ACCOUNT TRIGGER */
+
+.modules-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  margin-left: auto;
+  padding: 0 16px;
+  border: 1px solid rgba(145, 208, 255, 0.24);
+  border-radius: 12px;
+  background: rgba(57, 140, 245, 0.12);
+  color: #dbeafe;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.modules-trigger:hover {
+  border-color: rgba(145, 208, 255, 0.5);
+  background: rgba(57, 140, 245, 0.22);
+  color: #ffffff;
+}
+
+.modules-trigger:focus-visible {
+  outline: 2px solid var(--app-neon);
+  outline-offset: 3px;
+}
+
+.modules-trigger i {
+  font-size: 16px;
+}
 
 .account-trigger {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-left: 18px;
+  margin-left: 12px;
   padding: 6px 9px 6px 7px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
@@ -451,9 +484,37 @@ const logout = async () => {
   font-size: 14px;
 }
 
+.account-dropdown-menu {
+  width: min(360px, calc(100vw - 24px));
+  max-height: calc(100vh - 76px);
+  margin-top: 10px !important;
+  padding: 12px;
+  overflow-y: auto;
+  border: 1px solid rgba(145, 208, 255, 0.2);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #182231 0%, #141c28 100%);
+  box-shadow: 0 18px 44px rgba(2, 6, 23, 0.42);
+  color: #ffffff;
+}
+
+.account-dropdown-menu .account-profile-card {
+  margin-bottom: 12px;
+  padding: 14px;
+}
+
+.account-dropdown-menu .account-menu-item {
+  padding: 8px;
+}
+
+.account-dropdown-divider {
+  height: 1px;
+  margin: 10px 4px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
 /* ACCOUNT OFFCANVAS */
 
-.user-account-offcanvas {
+.app-menu-offcanvas {
   width: 400px !important;
   max-width: 100vw;
   background: linear-gradient(180deg, #141c28 0%, #182231 48%, #141c28 100%);
@@ -527,6 +588,15 @@ const logout = async () => {
 .account-offcanvas-body {
   padding: 20px 16px 24px;
   overflow-y: auto;
+}
+
+.modules-offcanvas-body {
+  padding: 28px 22px;
+}
+
+.modules-menu-section .account-section-label {
+  padding: 0 4px 12px;
+  color: #91a4bb;
 }
 
 /* PROFILE CARD */
@@ -605,10 +675,6 @@ const logout = async () => {
   margin-bottom: 22px;
 }
 
-.account-security-section {
-  padding-top: 2px;
-}
-
 .account-section-label {
   padding: 0 8px 9px;
   color: #64748b;
@@ -643,14 +709,53 @@ const logout = async () => {
   transform: translateX(2px);
 }
 
+.account-module-item {
+  margin-bottom: 10px;
+  padding: 13px 12px;
+  border-color: rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+  text-decoration: none;
+}
+
+.account-module-item:hover {
+  background: rgba(57, 140, 245, 0.12);
+  border-color: rgba(145, 208, 255, 0.22);
+  transform: translateY(-1px);
+}
+
+.account-module-item.router-link-exact-active {
+  background: linear-gradient(110deg, rgba(57, 140, 245, 0.2), rgba(57, 140, 245, 0.07));
+  border-color: rgba(145, 208, 255, 0.32);
+  box-shadow: inset 3px 0 0 var(--app-neon);
+}
+
+.account-module-item.router-link-exact-active .account-menu-arrow {
+  color: var(--app-neon);
+}
+
+.account-module-item .account-menu-icon {
+  width: 44px;
+  height: 44px;
+  flex-basis: 44px;
+  border-color: rgba(145, 208, 255, 0.14);
+  border-radius: 13px;
+  background: linear-gradient(145deg, rgba(57, 140, 245, 0.26), rgba(57, 140, 245, 0.1));
+}
+
+.account-module-item .account-menu-title {
+  font-size: 14px;
+}
+
+.account-module-item .account-menu-description {
+  color: #91a1b5;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .account-menu-item:focus-visible {
   outline: 2px solid var(--app-neon);
   outline-offset: 2px;
-}
-
-.account-menu-item-disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
 }
 
 .account-menu-icon {
@@ -697,10 +802,6 @@ const logout = async () => {
 
 /* LOGOUT */
 
-.account-logout-wrapper {
-  padding-top: 8px;
-}
-
 .account-logout-button {
   width: 100%;
 
@@ -740,13 +841,19 @@ const logout = async () => {
     display: none;
   }
 
-  .navbar-toggler {
-    margin-left: auto;
-    margin-right: 8px;
+  .modules-trigger {
+    width: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    padding: 0;
+  }
+
+  .modules-trigger span {
+    display: none;
   }
 
   .account-trigger {
-    margin-left: 0;
+    margin-left: 10px;
   }
 
   .account-trigger-info,
@@ -765,11 +872,6 @@ const logout = async () => {
   .account-trigger-avatar {
     width: 34px;
     height: 34px;
-  }
-
-  .navbar-collapse {
-    margin-top: 12px;
-    padding-bottom: 8px;
   }
 }
 
@@ -795,7 +897,7 @@ const logout = async () => {
     height: 32px;
   }
 
-  .user-account-offcanvas {
+  .app-menu-offcanvas {
     width: 100% !important;
   }
 
@@ -806,6 +908,10 @@ const logout = async () => {
   .account-offcanvas-body {
     padding-left: 12px;
     padding-right: 12px;
+  }
+
+  .modules-offcanvas-body {
+    padding: 24px 16px;
   }
 
   .account-profile-card {
