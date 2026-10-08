@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 import AppNavbar from '@/components/AppNavbar.vue'
+import AppFooter from '@/components/AppFooter.vue'
 import { productService } from '@/modules/products/services/productService'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
@@ -243,7 +244,8 @@ const goBack = () => {
                 </div>
 
                 <div class="form-help-box mb-4">
-                  Registra la cantidad en unidades enteras y verifica que el precio corresponda al valor de venta del producto.
+                  Registra la cantidad en unidades enteras y verifica que el precio corresponda al valor de venta del
+                  producto.
                 </div>
 
                 <div class="d-flex flex-column flex-md-row justify-content-end gap-2">
@@ -311,4 +313,5 @@ const goBack = () => {
       </section>
     </div>
   </main>
+  <AppFooter />
 </template>

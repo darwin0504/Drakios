@@ -2,7 +2,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
-
+import AppNavbar from '@/components/AppNavbar.vue'
+import AppFooter from '@/components/AppFooter.vue'
 import { authService } from '@/modules/auth/services/authService'
 import { useAuthStore } from '@/modules/auth/stores/authStore'
 import { getErrorMessage } from '@/helpers/errorHelper'
@@ -131,87 +132,97 @@ const cancel = () => {
 </script>
 
 <template>
-    <main class="change-password-page d-flex align-items-center justify-content-center">
-        <div class="card-dialog">
+    <div class="change-password-layout">
+        <AppNavbar />
+        <main class="app-page change-password-page d-flex align-items-center justify-content-center">
+            <div class="card-dialog">
 
-            <div class="change-password-header">
-                <div class="app-logo">DK</div>
+                <div class="change-password-header">
+                    <div class="app-logo">DK</div>
 
-                <h2 class="auth-title mb-2">Cambiar contraseña</h2>
+                    <h2 class="auth-title mb-2">Cambiar contraseña</h2>
 
-                <p class="auth-subtitle mb-0">
-                    Actualiza la contraseña de tu cuenta de forma segura.
-                </p>
-            </div>
-
-            <div class="security-notice">
-                <div class="security-notice-icon">
-                    <i class="bi bi-shield-lock"></i>
-                </div>
-
-                <div>
-                    <strong>Protege tu cuenta</strong>
-
-                    <p>
-                        Utiliza una contraseña diferente a la actual y de al menos 8 caracteres.
+                    <p class="auth-subtitle mb-0">
+                        Actualiza la contraseña de tu cuenta de forma segura.
                     </p>
                 </div>
+
+                <div class="security-notice">
+                    <div class="security-notice-icon">
+                        <i class="bi bi-shield-lock"></i>
+                    </div>
+
+                    <div>
+                        <strong>Protege tu cuenta</strong>
+
+                        <p>
+                            Utiliza una contraseña diferente a la actual y de al menos 8 caracteres.
+                        </p>
+                    </div>
+                </div>
+
+                <form @submit.prevent="changePassword">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label fw-semibold">
+                            Contraseña actual
+                        </label>
+
+                        <input id="currentPassword" v-model="currentPassword" type="password"
+                            class="form-control premium-input" placeholder="Ingresa tu contraseña actual"
+                            autocomplete="current-password" :disabled="loading" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label fw-semibold">
+                            Nueva contraseña
+                        </label>
+
+                        <input id="newPassword" v-model="newPassword" type="password" class="form-control premium-input"
+                            placeholder="Ingresa tu nueva contraseña" autocomplete="new-password" :disabled="loading" />
+
+                        <small class="text-muted">
+                            La contraseña debe tener al menos 8 caracteres.
+                        </small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="confirmPassword" class="form-label fw-semibold">
+                            Confirmar nueva contraseña
+                        </label>
+
+                        <input id="confirmPassword" v-model="confirmPassword" type="password"
+                            class="form-control premium-input" placeholder="Repite tu nueva contraseña"
+                            autocomplete="new-password" :disabled="loading" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-premium w-100" :disabled="loading">
+                        <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
+                            aria-hidden="true"></span>
+
+                        {{ loading ? 'Actualizando...' : 'Cambiar contraseña' }}
+                    </button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <button type="button" class="btn btn-link text-decoration-none" :disabled="loading" @click="cancel">
+                        Cancelar
+                    </button>
+                </div>
             </div>
-
-            <form @submit.prevent="changePassword">
-                <div class="mb-3">
-                    <label for="currentPassword" class="form-label fw-semibold">
-                        Contraseña actual
-                    </label>
-
-                    <input id="currentPassword" v-model="currentPassword" type="password"
-                        class="form-control premium-input" placeholder="Ingresa tu contraseña actual"
-                        autocomplete="current-password" :disabled="loading" />
-                </div>
-
-                <div class="mb-3">
-                    <label for="newPassword" class="form-label fw-semibold">
-                        Nueva contraseña
-                    </label>
-
-                    <input id="newPassword" v-model="newPassword" type="password" class="form-control premium-input"
-                        placeholder="Ingresa tu nueva contraseña" autocomplete="new-password" :disabled="loading" />
-
-                    <small class="text-muted">
-                        La contraseña debe tener al menos 8 caracteres.
-                    </small>
-                </div>
-
-                <div class="mb-4">
-                    <label for="confirmPassword" class="form-label fw-semibold">
-                        Confirmar nueva contraseña
-                    </label>
-
-                    <input id="confirmPassword" v-model="confirmPassword" type="password"
-                        class="form-control premium-input" placeholder="Repite tu nueva contraseña"
-                        autocomplete="new-password" :disabled="loading" />
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-premium w-100" :disabled="loading">
-                    <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
-                        aria-hidden="true"></span>
-
-                    {{ loading ? 'Actualizando...' : 'Cambiar contraseña' }}
-                </button>
-            </form>
-
-            <div class="text-center mt-3">
-                <button type="button" class="btn btn-link text-decoration-none" :disabled="loading" @click="cancel">
-                    Cancelar
-                </button>
-            </div>
-        </div>
-    </main>
+        </main>
+        <AppFooter />
+    </div>
 </template>
 
 <style scoped>
-.change-password-page {
+.change-password-layout {
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.change-password-page {
+    flex: 1 0 auto;
     padding: 24px;
 }
 

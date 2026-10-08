@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
+import AppFooter from '@/components/AppFooter.vue'
 
 import { authService } from '@/modules/auth/services/authService'
 import { getErrorMessage } from '@/helpers/errorHelper'
@@ -121,64 +122,67 @@ const requestNewLink = () => {
 </script>
 
 <template>
-    <main class="auth-page d-flex align-items-center justify-content-center">
-        <div class="card-dialog">
-            <div class="reset-password-header">
-                <div class="app-logo">DK</div>
+    <div class="auth-layout">
+        <main class="auth-page d-flex align-items-center justify-content-center">
+            <div class="card-dialog">
+                <div class="reset-password-header">
+                    <div class="app-logo">DK</div>
 
-                <h2 class="auth-title mb-2">Restablecer contraseña</h2>
+                    <h2 class="auth-title mb-2">Restablecer contraseña</h2>
 
-                <p class="auth-subtitle mb-0">Ingresa una nueva contraseña para tu cuenta.</p>
-            </div>
-
-            <div v-if="!token" class="alert alert-info" role="alert">
-                <strong>Enlace no válido o vencido.</strong>
-
-                <div class="mt-2">
-                    Solicita un nuevo enlace para restablecer tu contraseña.
-                </div>
-            </div>
-
-            <form v-else @submit.prevent="resetPassword">
-                <div class="mb-3">
-                    <label for="password" class="form-label fw-semibold">
-                        Nueva contraseña
-                    </label>
-
-                    <input id="password" v-model="password" type="password" class="form-control premium-input"
-                        placeholder="Ingresa tu nueva contraseña" autocomplete="new-password" :disabled="loading" />
-
-                    <small class="text-muted">
-                        La contraseña debe tener al menos 8 caracteres.
-                    </small>
+                    <p class="auth-subtitle mb-0">Ingresa una nueva contraseña para tu cuenta.</p>
                 </div>
 
-                <div class="mb-4">
-                    <label for="confirmPassword" class="form-label fw-semibold">
-                        Confirmar contraseña
-                    </label>
+                <div v-if="!token" class="alert alert-info" role="alert">
+                    <strong>Enlace no válido o vencido.</strong>
 
-                    <input id="confirmPassword" v-model="confirmPassword" type="password"
-                        class="form-control premium-input" placeholder="Repite tu nueva contraseña"
-                        autocomplete="new-password" :disabled="loading" />
+                    <div class="mt-2">
+                        Solicita un nuevo enlace para restablecer tu contraseña.
+                    </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-premium w-100" :disabled="loading">
-                    <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
-                        aria-hidden="true"></span>
+                <form v-else @submit.prevent="resetPassword">
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-semibold">
+                            Nueva contraseña
+                        </label>
 
-                    {{ loading ? 'Actualizando...' : 'Actualizar contraseña' }}
-                </button>
-            </form>
+                        <input id="password" v-model="password" type="password" class="form-control premium-input"
+                            placeholder="Ingresa tu nueva contraseña" autocomplete="new-password" :disabled="loading" />
 
-            <div class="text-center mt-3">
-                <button v-if="!token" type="button" class="btn btn-link fw-semibold text-decoration-none p-0"
-                    @click="requestNewLink">
-                    Solicitar un nuevo enlace
-                </button>
+                        <small class="text-muted">
+                            La contraseña debe tener al menos 8 caracteres.
+                        </small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="confirmPassword" class="form-label fw-semibold">
+                            Confirmar contraseña
+                        </label>
+
+                        <input id="confirmPassword" v-model="confirmPassword" type="password"
+                            class="form-control premium-input" placeholder="Repite tu nueva contraseña"
+                            autocomplete="new-password" :disabled="loading" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-premium w-100" :disabled="loading">
+                        <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
+                            aria-hidden="true"></span>
+
+                        {{ loading ? 'Actualizando...' : 'Actualizar contraseña' }}
+                    </button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <button v-if="!token" type="button" class="btn btn-link fw-semibold text-decoration-none p-0"
+                        @click="requestNewLink">
+                        Solicitar un nuevo enlace
+                    </button>
+                </div>
             </div>
-        </div>
-    </main>
+        </main>
+        <AppFooter compact />
+    </div>
 </template>
 
 <style scoped>

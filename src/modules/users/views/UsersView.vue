@@ -6,6 +6,7 @@ import $ from 'jquery'
 import 'datatables.net-bs5'
 import 'datatables.net-responsive-bs5'
 import AppNavbar from '@/components/AppNavbar.vue'
+import AppFooter from '@/components/AppFooter.vue'
 import userService from '@/modules/users/services/userService'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
@@ -283,8 +284,8 @@ onBeforeUnmount(() => {
 
                   <td>
                     <span class="badge" :class="user.role?.name === 'ADMIN'
-                        ? 'text-bg-primary'
-                        : 'text-bg-secondary'
+                      ? 'text-bg-primary'
+                      : 'text-bg-secondary'
                       ">
                       {{ user.role?.name || 'Sin rol' }}
                     </span>
@@ -292,8 +293,8 @@ onBeforeUnmount(() => {
 
                   <td>
                     <span class="badge" :class="user.status === 'ACTIVE'
-                        ? 'text-bg-success'
-                        : 'text-bg-danger'
+                      ? 'text-bg-success'
+                      : 'text-bg-danger'
                       ">
                       {{ user.status }}
                     </span>
@@ -310,4 +311,5 @@ onBeforeUnmount(() => {
       </section>
     </div>
   </main>
+  <AppFooter />
 </template>

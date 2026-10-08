@@ -235,8 +235,8 @@ const logout = async () => {
   </nav>
 
   <!-- Modules menu -->
-  <div id="modulesOffcanvas" ref="modulesOffcanvas" class="offcanvas offcanvas-start app-menu-offcanvas"
-    tabindex="-1" aria-labelledby="modulesOffcanvasLabel">
+  <div id="modulesOffcanvas" ref="modulesOffcanvas" class="offcanvas offcanvas-start app-menu-offcanvas" tabindex="-1"
+    aria-labelledby="modulesOffcanvasLabel">
     <!-- Header -->
     <div class="offcanvas-header account-offcanvas-header">
       <div>
@@ -267,27 +267,8 @@ const logout = async () => {
           GESTIÓN COMERCIAL
         </div>
 
-        <RouterLink class="account-menu-item account-module-item" to="/products" exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/products')">
-          <span class="account-menu-icon">
-            <i class="bi bi-box-seam"></i>
-          </span>
-
-          <span class="account-menu-content">
-            <span class="account-menu-title">
-              Productos
-            </span>
-
-            <span class="account-menu-description">
-              Consulta y administra el catálogo de productos.
-            </span>
-          </span>
-
-          <span class="account-menu-arrow">
-            <i class="bi bi-arrow-up-right"></i>
-          </span>
-        </RouterLink>
-
-        <RouterLink class="account-menu-item account-module-item" to="/users" exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/users')">
+        <RouterLink class="account-menu-item account-module-item" to="/users"
+          exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/users')">
           <span class="account-menu-icon">
             <i class="bi bi-people"></i>
           </span>
@@ -299,6 +280,27 @@ const logout = async () => {
 
             <span class="account-menu-description">
               Consulta los usuarios y el estado de sus cuentas.
+            </span>
+          </span>
+
+          <span class="account-menu-arrow">
+            <i class="bi bi-arrow-up-right"></i>
+          </span>
+        </RouterLink>
+
+        <RouterLink class="account-menu-item account-module-item" to="/products"
+          exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/products')">
+          <span class="account-menu-icon">
+            <i class="bi bi-box-seam"></i>
+          </span>
+
+          <span class="account-menu-content">
+            <span class="account-menu-title">
+              Productos
+            </span>
+
+            <span class="account-menu-description">
+              Consulta y administra el catálogo de productos.
             </span>
           </span>
 

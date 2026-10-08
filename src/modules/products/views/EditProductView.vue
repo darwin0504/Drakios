@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import Swal from 'sweetalert2'
 import AppNavbar from '@/components/AppNavbar.vue'
+import AppFooter from '@/components/AppFooter.vue'
 import { productService } from '@/modules/products/services/productService'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
@@ -367,4 +368,5 @@ onMounted(() => {
       </section>
     </div>
   </main>
+  <AppFooter />
 </template>

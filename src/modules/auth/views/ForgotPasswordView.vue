@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
+import AppFooter from '@/components/AppFooter.vue'
 
 import { authService } from '@/modules/auth/services/authService'
 import { getErrorMessage } from '@/helpers/errorHelper'
@@ -79,42 +80,46 @@ const goToLogin = () => {
 </script>
 
 <template>
-    <main class="auth-page d-flex align-items-center justify-content-center">
-        <div class="card-dialog">
-            <div class="forgot-password-header">
-                <div class="app-logo">DK</div>
+    <div class="auth-layout">
+        <main class="auth-page d-flex align-items-center justify-content-center">
+            <div class="card-dialog">
+                <div class="forgot-password-header">
+                    <div class="app-logo">DK</div>
 
-                <h2 class="auth-title mb-2">Recuperar contraseña</h2>
+                    <h2 class="auth-title mb-2">Recuperar contraseña</h2>
 
-                <p class="auth-subtitle mb-0">
-                    Indica el correo asociado a tu cuenta. Si está registrado, recibirás instrucciones para restablecer tu contraseña.
-                </p>
-            </div>
-
-            <form @submit.prevent="submitRequest">
-                <div class="mb-3">
-                    <label for="email" class="form-label fw-semibold">Correo electrónico</label>
-
-                    <input id="email" v-model.trim="email" type="email" class="form-control premium-input"
-                        placeholder="correo@ejemplo.com" autocomplete="email" :disabled="loading" />
+                    <p class="auth-subtitle mb-0">
+                        Indica el correo asociado a tu cuenta. Si está registrado, recibirás instrucciones para
+                        restablecer tu contraseña.
+                    </p>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-premium w-100" :disabled="loading">
-                    <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
-                        aria-hidden="true"></span>
+                <form @submit.prevent="submitRequest">
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-semibold">Correo electrónico</label>
 
-                    {{ loading ? 'Enviando instrucciones...' : 'Enviar instrucciones' }}
-                </button>
-            </form>
+                        <input id="email" v-model.trim="email" type="email" class="form-control premium-input"
+                            placeholder="correo@ejemplo.com" autocomplete="email" :disabled="loading" />
+                    </div>
 
-            <div class="text-center mt-3">
-                <button type="button" class="btn btn-link fw-semibold text-decoration-none p-0" :disabled="loading"
-                    @click="goToLogin">
-                    Volver al inicio de sesión
-                </button>
+                    <button type="submit" class="btn btn-primary btn-premium w-100" :disabled="loading">
+                        <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"
+                            aria-hidden="true"></span>
+
+                        {{ loading ? 'Enviando instrucciones...' : 'Enviar instrucciones' }}
+                    </button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <button type="button" class="btn btn-link fw-semibold text-decoration-none p-0" :disabled="loading"
+                        @click="goToLogin">
+                        Volver al inicio de sesión
+                    </button>
+                </div>
             </div>
-        </div>
-    </main>
+        </main>
+        <AppFooter compact />
+    </div>
 </template>
 
 <style scoped>

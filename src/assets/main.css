@@ -73,6 +73,18 @@ body {
   padding: 24px;
 }
 
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-layout > .auth-page,
+.auth-layout > .change-password-page {
+  min-height: 0;
+  flex: 1 0 auto;
+}
+
 .auth-wrapper {
   width: 100%;
   max-width: 980px;
@@ -226,7 +238,7 @@ body {
 }
 
 .app-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 72px);
   background:
     radial-gradient(circle at top left, rgba(67, 135, 209, 0.1), transparent 30%),
     linear-gradient(180deg, #0d121b 0%, #111925 100%);

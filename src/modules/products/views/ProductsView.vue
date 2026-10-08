@@ -5,6 +5,7 @@ import $ from 'jquery'
 import 'datatables.net-bs5'
 import 'datatables.net-responsive-bs5'
 import AppNavbar from '@/components/AppNavbar.vue'
+import AppFooter from '@/components/AppFooter.vue'
 import { productService } from '@/modules/products/services/productService'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
@@ -336,8 +337,7 @@ onBeforeUnmount(() => {
                       </RouterLink>
 
                       <button type="button" class="btn btn-soft-danger btn-sm action-btn"
-                        :aria-label="`Eliminar ${product.name}`"
-                        @click="confirmDelete(product)">
+                        :aria-label="`Eliminar ${product.name}`" @click="confirmDelete(product)">
                         Eliminar
                       </button>
                     </div>
@@ -350,4 +350,5 @@ onBeforeUnmount(() => {
       </section>
     </div>
   </main>
+  <AppFooter />
 </template>

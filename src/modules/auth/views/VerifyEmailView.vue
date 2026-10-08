@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import AppFooter from "@/components/AppFooter.vue";
 import { authService } from "../services/authService";
 
 const router = useRouter();
@@ -56,67 +57,72 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-6">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body p-4 text-center">
+    <div class="auth-layout">
+        <main class="auth-page d-flex align-items-center justify-content-center">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-8 col-lg-6">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body p-4 text-center">
 
-                        <div v-if="loading">
-                            <div class="spinner-border text-primary mb-3" role="status">
-                                <span class="visually-hidden">
-                                    Verificando...
-                                </span>
+                                <div v-if="loading">
+                                    <div class="spinner-border text-primary mb-3" role="status">
+                                        <span class="visually-hidden">
+                                            Verificando...
+                                        </span>
+                                    </div>
+
+                                    <h2 class="h4 mb-2">
+                                        Verificando tu correo electrónico
+                                    </h2>
+
+                                    <p class="text-muted mb-0">
+                                        Estamos confirmando la dirección asociada a tu cuenta.
+                                    </p>
+                                </div>
+
+                                <div v-else-if="success">
+                                    <div class="text-success mb-3" style="font-size: 3rem;">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    </div>
+
+                                    <h2 class="h4 mb-2">
+                                        Correo electrónico verificado
+                                    </h2>
+
+                                    <p class="text-muted mb-4">
+                                        Ya puedes iniciar sesión y acceder a Drakios.
+                                    </p>
+
+                                    <button type="button" class="btn btn-primary" @click="goToLogin">
+                                        Iniciar sesión
+                                    </button>
+                                </div>
+
+                                <div v-else>
+                                    <div class="text-danger mb-3" style="font-size: 3rem;">
+                                        <i class="bi bi-x-circle-fill"></i>
+                                    </div>
+
+                                    <h2 class="h4 mb-2">
+                                        No se pudo verificar tu correo electrónico
+                                    </h2>
+
+                                    <p class="text-danger mb-4">
+                                        {{ errorMessage }}
+                                    </p>
+
+                                    <button type="button" class="btn btn-primary" @click="goToLogin">
+                                        Iniciar sesión
+                                    </button>
+                                </div>
+
                             </div>
-
-                            <h2 class="h4 mb-2">
-                                Verificando tu correo electrónico
-                            </h2>
-
-                            <p class="text-muted mb-0">
-                                Estamos confirmando la dirección asociada a tu cuenta.
-                            </p>
                         </div>
-
-                        <div v-else-if="success">
-                            <div class="text-success mb-3" style="font-size: 3rem;">
-                                <i class="bi bi-check-circle-fill"></i>
-                            </div>
-
-                            <h2 class="h4 mb-2">
-                                Correo electrónico verificado
-                            </h2>
-
-                            <p class="text-muted mb-4">
-                                Ya puedes iniciar sesión y acceder a Drakios.
-                            </p>
-
-                            <button type="button" class="btn btn-primary" @click="goToLogin">
-                                Iniciar sesión
-                            </button>
-                        </div>
-
-                        <div v-else>
-                            <div class="text-danger mb-3" style="font-size: 3rem;">
-                                <i class="bi bi-x-circle-fill"></i>
-                            </div>
-
-                            <h2 class="h4 mb-2">
-                                No se pudo verificar tu correo electrónico
-                            </h2>
-
-                            <p class="text-danger mb-4">
-                                {{ errorMessage }}
-                            </p>
-
-                            <button type="button" class="btn btn-primary" @click="goToLogin">
-                                Iniciar sesión
-                            </button>
-                        </div>
-
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
+        <AppFooter compact />
     </div>
 </template>
