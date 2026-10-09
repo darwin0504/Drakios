@@ -159,9 +159,18 @@ onMounted(() => {
 
     <main class="app-page">
         <div class="container page-shell">
+            <nav class="page-breadcrumb" aria-label="Ruta de navegación">
+                <RouterLink to="/users" class="page-breadcrumb-link">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                    <span>Usuarios</span>
+                </RouterLink>
+                <i class="bi bi-chevron-right page-breadcrumb-separator" aria-hidden="true"></i>
+                <span aria-current="page">Editar usuario</span>
+            </nav>
+
             <section class="page-hero mb-4">
                 <div class="row align-items-center position-relative">
-                    <div class="col-lg-8">
+                    <div class="col-12">
                         <span class="page-kicker">
                             {{ appName }} · {{ viewName }}
                         </span>
@@ -173,14 +182,6 @@ onMounted(() => {
                         <p class="text-white-50 mb-0">
                             Actualiza la información y los permisos de la cuenta seleccionada.
                         </p>
-                    </div>
-
-                    <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-                        <button type="button" class="btn btn-hero-action btn-lg fw-semibold action-btn"
-                            :disabled="loading" @click="cancel">
-                            <i class="bi bi-arrow-left me-1"></i>
-                            Volver al listado
-                        </button>
                     </div>
                 </div>
             </section>

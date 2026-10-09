@@ -1,6 +1,7 @@
 import ProductsView from "./views/ProductsView.vue";
 import CreateProductView from "./views/CreateProductView.vue";
 import EditProductView from "./views/EditProductView.vue";
+import ProductDetailView from "./views/ProductDetailView.vue";
 
 export default [
   {
@@ -23,6 +24,14 @@ export default [
     path: "/products/edit/:id",
     name: "products-edit",
     component: EditProductView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/products/:id",
+    name: "products-detail",
+    component: ProductDetailView,
     meta: {
       requiresAuth: true,
     },

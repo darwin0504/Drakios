@@ -330,15 +330,22 @@ onBeforeUnmount(() => {
                   </td>
 
                   <td>
-                    <div class="d-flex gap-2">
-                      <RouterLink :to="`/products/edit/${product.id}`" class="btn btn-soft-primary btn-sm action-btn"
-                        :aria-label="`Editar ${product.name}`">
-                        Editar
+                    <div class="table-actions">
+                      <RouterLink :to="{ name: 'products-detail', params: { id: product.id } }"
+                        class="btn btn-sm action-btn table-action-btn table-action-view"
+                        :aria-label="`Ver detalle de ${product.name}`" :title="`Ver detalle de ${product.name}`">
+                        <i class="bi bi-eye" aria-hidden="true"></i>
+                      </RouterLink>
+                      <RouterLink :to="`/products/edit/${product.id}`"
+                        class="btn btn-sm action-btn table-action-btn table-action-edit"
+                        :aria-label="`Editar ${product.name}`" :title="`Editar ${product.name}`">
+                        <i class="bi bi-pencil-square" aria-hidden="true"></i>
                       </RouterLink>
 
-                      <button type="button" class="btn btn-soft-danger btn-sm action-btn"
-                        :aria-label="`Eliminar ${product.name}`" @click="confirmDelete(product)">
-                        Eliminar
+                      <button type="button" class="btn btn-sm action-btn table-action-btn table-action-delete"
+                        :aria-label="`Eliminar ${product.name}`" :title="`Eliminar ${product.name}`"
+                        @click="confirmDelete(product)">
+                        <i class="bi bi-trash3" aria-hidden="true"></i>
                       </button>
                     </div>
                   </td>

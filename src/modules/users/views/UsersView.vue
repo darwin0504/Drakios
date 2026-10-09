@@ -15,6 +15,8 @@ const viewName = 'Gestión de usuarios'
 
 const users = ref([])
 const loading = ref(false)
+const searchQuery = ref('')
+const statusFilter = ref('')
 
 let dataTable = null
 
@@ -43,6 +45,23 @@ const formatDate = (value) => {
   }).format(new Date(value))
 }
 
+const applyFilters = () => {
+  if (!dataTable) {
+    return
+  }
+
+  dataTable.search(searchQuery.value.trim())
+  dataTable.column(4)
+    .search(statusFilter.value ? `^${statusFilter.value}$` : '', true, false)
+    .draw()
+}
+
+const clearFilters = () => {
+  searchQuery.value = ''
+  statusFilter.value = ''
+  applyFilters()
+}
+
 const destroyDataTable = () => {
   if ($.fn.DataTable.isDataTable('#usersTable')) {
     $('#usersTable').DataTable().destroy()
@@ -60,9 +79,16 @@ const initDataTable = async () => {
     responsive: true,
     pageLength: 10,
     ordering: true,
+    layout: {
+      topEnd: null,
+    },
     columnDefs: [
       {
-        targets: -1,
+        targets: [0, 3, 5, 6],
+        searchable: false,
+      },
+      {
+        targets: 6,
         orderable: false,
         searchable: false,
       },
@@ -85,6 +111,8 @@ const initDataTable = async () => {
       },
     },
   })
+
+  applyFilters()
 }
 
 const loadUsers = async () => {
@@ -251,6 +279,57 @@ onBeforeUnmount(() => {
         </div>
 
         <div class="card-body p-4">
+          <div class="user-search-filters mb-4">
+            <div class="user-search-field">
+              <label for="user-search" class="form-label fw-semibold mb-2">
+                Buscar usuarios
+              </label>
+              <div class="input-group">
+                <span class="input-group-text" aria-hidden="true">
+                  <i class="bi bi-search"></i>
+                </span>
+                <input
+                  id="user-search"
+                  v-model="searchQuery"
+                  type="search"
+                  class="form-control premium-input"
+                  placeholder="Nombre, correo o estado"
+                  autocomplete="off"
+                  aria-describedby="user-search-help"
+                  @input="applyFilters"
+                />
+              </div>
+              <div id="user-search-help" class="form-text">
+                Busca por nombre, correo electrónico o estado de la cuenta.
+              </div>
+            </div>
+
+            <div class="user-status-filter">
+              <label for="user-status-filter" class="form-label fw-semibold mb-2">
+                Estado
+              </label>
+              <select
+                id="user-status-filter"
+                v-model="statusFilter"
+                class="form-select premium-input"
+                @change="applyFilters"
+              >
+                <option value="">Todos los estados</option>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+              </select>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-outline-secondary action-btn user-filter-reset"
+              :disabled="!searchQuery && !statusFilter"
+              @click="clearFilters"
+            >
+              <i class="bi bi-x-circle me-1" aria-hidden="true"></i>
+              Limpiar filtros
+            </button>
+          </div>
 
           <div v-if="loading" class="alert alert-info border-0 rounded-4" role="status" aria-live="polite">
             Consultando los usuarios registrados...
@@ -305,7 +384,7 @@ onBeforeUnmount(() => {
                       ? 'text-bg-success'
                       : 'text-bg-danger'
                       ">
-                      {{ user.status }}
+                      {{ user.status === 'ACTIVE' ? 'Activo' : 'Inactivo' }}
                     </span>
                   </td>
 
@@ -314,11 +393,16 @@ onBeforeUnmount(() => {
                   </td>
 
                   <td>
-                    <div class="d-flex gap-2">
-                      <RouterLink :to="{ name: 'users-edit', params: { id: user.id } }" class="btn btn-soft-primary btn-sm action-btn"
-                        :aria-label="`Editar ${user.name}`">
-                        <i class="bi bi-pencil-square me-1" aria-hidden="true"></i>
-                        Editar
+                    <div class="table-actions">
+                      <RouterLink :to="{ name: 'users-detail', params: { id: user.id } }"
+                        class="btn btn-sm action-btn table-action-btn table-action-view"
+                        :aria-label="`Ver detalle de ${user.name}`" :title="`Ver detalle de ${user.name}`">
+                        <i class="bi bi-eye" aria-hidden="true"></i>
+                      </RouterLink>
+                      <RouterLink :to="{ name: 'users-edit', params: { id: user.id } }"
+                        class="btn btn-sm action-btn table-action-btn table-action-edit"
+                        :aria-label="`Editar ${user.name}`" :title="`Editar ${user.name}`">
+                        <i class="bi bi-pencil-square" aria-hidden="true"></i>
                       </RouterLink>
                     </div>
                   </td>
