@@ -7,9 +7,11 @@ import 'datatables.net-bs5'
 import 'datatables.net-responsive-bs5'
 import AppNavbar from '@/components/AppNavbar.vue'
 import AppFooter from '@/components/AppFooter.vue'
+import { useAuthStore } from '@/modules/auth/stores/authStore'
 import userService from '@/modules/users/services/userService'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
+const authStore = useAuthStore()
 const appName = 'Drakios'
 const viewName = 'Gestión de usuarios'
 
@@ -172,7 +174,8 @@ onBeforeUnmount(() => {
           </div>
 
           <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-            <RouterLink to="/users/create" class="btn btn-hero-action btn-lg fw-semibold action-btn">
+            <RouterLink v-if="authStore.permissionsLoaded && authStore.hasPermission('users.create')"
+              to="/users/create" class="btn btn-hero-action btn-lg fw-semibold action-btn">
               <i class="bi bi-person-plus me-1"></i>
               Crear usuario
             </RouterLink>
@@ -399,7 +402,8 @@ onBeforeUnmount(() => {
                         :aria-label="`Ver detalle de ${user.name}`" :title="`Ver detalle de ${user.name}`">
                         <i class="bi bi-eye" aria-hidden="true"></i>
                       </RouterLink>
-                      <RouterLink :to="{ name: 'users-edit', params: { id: user.id } }"
+                      <RouterLink v-if="authStore.hasPermission('users.update')"
+                        :to="{ name: 'users-edit', params: { id: user.id } }"
                         class="btn btn-sm action-btn table-action-btn table-action-edit"
                         :aria-label="`Editar ${user.name}`" :title="`Editar ${user.name}`">
                         <i class="bi bi-pencil-square" aria-hidden="true"></i>

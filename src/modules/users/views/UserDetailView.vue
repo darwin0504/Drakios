@@ -3,10 +3,12 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppNavbar from '@/components/AppNavbar.vue'
 import AppFooter from '@/components/AppFooter.vue'
+import { useAuthStore } from '@/modules/auth/stores/authStore'
 import userService from '@/modules/users/services/userService'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
 const route = useRoute()
+const authStore = useAuthStore()
 const user = ref(null)
 const loading = ref(true)
 const errorMessage = ref('')
@@ -139,7 +141,7 @@ watch(() => route.params.id, loadUser, { immediate: true })
               <span class="entity-detail-status-dot" aria-hidden="true"></span>
               {{ userStatus }}
             </span>
-            <RouterLink
+            <RouterLink v-if="authStore.permissionsLoaded && authStore.hasPermission('users.update')"
               :to="{ name: 'users-edit', params: { id: user.id ?? userId } }"
               class="btn btn-hero-action fw-semibold action-btn"
             >

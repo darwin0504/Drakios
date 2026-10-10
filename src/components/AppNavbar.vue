@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Offcanvas } from 'bootstrap'
 import Swal from 'sweetalert2'
@@ -10,6 +10,18 @@ const router = useRouter()
 const authStore = useAuthStore()
 const appName = 'Drakios'
 const modulesOffcanvas = ref(null)
+
+const loadPermissions = async () => {
+  try {
+    await authStore.loadPermissions()
+  } catch (error) {
+    console.error('Error al cargar los permisos del usuario:', error)
+  }
+}
+
+onMounted(() => {
+  loadPermissions()
+})
 
 const userName = computed(() => {
   return authStore.user?.name || 'Usuario'
@@ -267,8 +279,8 @@ const logout = async () => {
           GESTIÓN COMERCIAL
         </div>
 
-        <RouterLink class="account-menu-item account-module-item" to="/users"
-          exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/users')">
+        <RouterLink v-if="authStore.permissionsLoaded && authStore.hasPermission('users.read')" class="account-menu-item account-module-item"
+          to="/users" exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/users')">
           <span class="account-menu-icon">
             <i class="bi bi-people"></i>
           </span>
@@ -288,8 +300,8 @@ const logout = async () => {
           </span>
         </RouterLink>
 
-        <RouterLink class="account-menu-item account-module-item" to="/products"
-          exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/products')">
+        <RouterLink v-if="authStore.permissionsLoaded && authStore.hasPermission('products.read')" class="account-menu-item account-module-item"
+          to="/products" exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/products')">
           <span class="account-menu-icon">
             <i class="bi bi-box-seam"></i>
           </span>

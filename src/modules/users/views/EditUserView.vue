@@ -4,9 +4,9 @@ import { useRoute, useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 import AppNavbar from '@/components/AppNavbar.vue'
 import AppFooter from '@/components/AppFooter.vue'
+import { useAuthStore } from '@/modules/auth/stores/authStore'
 import userService from '@/modules/users/services/userService'
 import { getErrorMessage } from '@/helpers/errorHelper'
-import { useAuthStore } from '@/modules/auth/stores/authStore'
 
 const route = useRoute()
 const router = useRouter()
@@ -158,7 +158,18 @@ onMounted(() => {
     <AppNavbar />
 
     <main class="app-page">
-        <div class="container page-shell">
+        <div v-if="!authStore.permissionsLoaded" class="container page-shell">
+            <div class="alert alert-info border-0 rounded-4" role="status" aria-live="polite">
+                Verificando permisos...
+            </div>
+        </div>
+        <div v-else-if="!authStore.hasPermission('users.update')" class="container page-shell">
+            <div class="alert alert-warning border-0 rounded-4" role="alert">
+                No tienes permiso para editar usuarios.
+                <RouterLink to="/users" class="alert-link">Volver a usuarios</RouterLink>
+            </div>
+        </div>
+        <div v-else class="container page-shell">
             <nav class="page-breadcrumb" aria-label="Ruta de navegación">
                 <RouterLink to="/users" class="page-breadcrumb-link">
                     <i class="bi bi-arrow-left" aria-hidden="true"></i>

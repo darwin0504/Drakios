@@ -4,11 +4,13 @@ import { useRouter, useRoute } from 'vue-router'
 import Swal from 'sweetalert2'
 import AppNavbar from '@/components/AppNavbar.vue'
 import AppFooter from '@/components/AppFooter.vue'
+import { useAuthStore } from '@/modules/auth/stores/authStore'
 import { productService } from '@/modules/products/services/productService'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
 const router = useRouter()
 const route = useRoute()
+const authStore = useAuthStore()
 
 const appName = 'Drakios'
 const viewName = 'Editar producto'
@@ -194,7 +196,18 @@ onMounted(() => {
   <AppNavbar />
 
   <main class="app-page">
-    <div class="container page-shell">
+    <div v-if="!authStore.permissionsLoaded" class="container page-shell">
+      <div class="alert alert-info border-0 rounded-4" role="status" aria-live="polite">
+        Verificando permisos...
+      </div>
+    </div>
+    <div v-else-if="!authStore.hasPermission('products.update')" class="container page-shell">
+      <div class="alert alert-warning border-0 rounded-4" role="alert">
+        No tienes permiso para editar productos.
+        <RouterLink to="/products" class="alert-link">Volver a productos</RouterLink>
+      </div>
+    </div>
+    <div v-else class="container page-shell">
       <nav class="page-breadcrumb" aria-label="Ruta de navegación">
         <RouterLink to="/products" class="page-breadcrumb-link">
           <i class="bi bi-arrow-left" aria-hidden="true"></i>

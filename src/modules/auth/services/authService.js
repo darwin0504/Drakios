@@ -28,4 +28,8 @@ export const authService = {
   verifyEmail(data) {
     return api.post("/auth/verify-email", data);
   },
+
+  getMyPermissions() {
+    return api.get('/auth/me/permissions')
+  },
 };

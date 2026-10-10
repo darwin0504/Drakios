@@ -3,10 +3,12 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppNavbar from '@/components/AppNavbar.vue'
 import AppFooter from '@/components/AppFooter.vue'
+import { useAuthStore } from '@/modules/auth/stores/authStore'
 import { productService } from '@/modules/products/services/productService'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
 const route = useRoute()
+const authStore = useAuthStore()
 const product = ref(null)
 const loading = ref(true)
 const errorMessage = ref('')
@@ -148,7 +150,7 @@ watch(() => route.params.id, loadProduct, { immediate: true })
               <span class="entity-detail-status-dot" aria-hidden="true"></span>
               {{ stockStatus }}
             </span>
-            <RouterLink
+            <RouterLink v-if="authStore.permissionsLoaded && authStore.hasPermission('products.update')"
               :to="{ name: 'products-edit', params: { id: product.id ?? productId } }"
               class="btn btn-hero-action fw-semibold action-btn"
             >

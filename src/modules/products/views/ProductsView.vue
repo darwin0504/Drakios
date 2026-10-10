@@ -6,9 +6,11 @@ import 'datatables.net-bs5'
 import 'datatables.net-responsive-bs5'
 import AppNavbar from '@/components/AppNavbar.vue'
 import AppFooter from '@/components/AppFooter.vue'
+import { useAuthStore } from '@/modules/auth/stores/authStore'
 import { productService } from '@/modules/products/services/productService'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
+const authStore = useAuthStore()
 const appName = 'Drakios'
 const viewName = 'Gestión de productos'
 
@@ -182,7 +184,8 @@ onBeforeUnmount(() => {
           </div>
 
           <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-            <RouterLink to="/products/create" class="btn btn-hero-action btn-lg fw-semibold action-btn">
+            <RouterLink v-if="authStore.permissionsLoaded && authStore.hasPermission('products.create')"
+              to="/products/create" class="btn btn-hero-action btn-lg fw-semibold action-btn">
               + Nuevo producto
             </RouterLink>
           </div>
@@ -336,13 +339,14 @@ onBeforeUnmount(() => {
                         :aria-label="`Ver detalle de ${product.name}`" :title="`Ver detalle de ${product.name}`">
                         <i class="bi bi-eye" aria-hidden="true"></i>
                       </RouterLink>
-                      <RouterLink :to="`/products/edit/${product.id}`"
+                      <RouterLink v-if="authStore.hasPermission('products.update')" :to="`/products/edit/${product.id}`"
                         class="btn btn-sm action-btn table-action-btn table-action-edit"
                         :aria-label="`Editar ${product.name}`" :title="`Editar ${product.name}`">
                         <i class="bi bi-pencil-square" aria-hidden="true"></i>
                       </RouterLink>
 
-                      <button type="button" class="btn btn-sm action-btn table-action-btn table-action-delete"
+                      <button v-if="authStore.hasPermission('products.delete')" type="button"
+                        class="btn btn-sm action-btn table-action-btn table-action-delete"
                         :aria-label="`Eliminar ${product.name}`" :title="`Eliminar ${product.name}`"
                         @click="confirmDelete(product)">
                         <i class="bi bi-trash3" aria-hidden="true"></i>
