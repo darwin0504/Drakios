@@ -300,6 +300,27 @@ const logout = async () => {
           </span>
         </RouterLink>
 
+        <RouterLink v-if="authStore.permissionsLoaded && authStore.hasPermission('roles.read')" class="account-menu-item account-module-item"
+          to="/roles" exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/roles')">
+          <span class="account-menu-icon">
+            <i class="bi bi-shield-lock"></i>
+          </span>
+
+          <span class="account-menu-content">
+            <span class="account-menu-title">
+              Roles y permisos
+            </span>
+
+            <span class="account-menu-description">
+              Administra los roles y el acceso a las funciones.
+            </span>
+          </span>
+
+          <span class="account-menu-arrow">
+            <i class="bi bi-arrow-up-right"></i>
+          </span>
+        </RouterLink>
+
         <RouterLink v-if="authStore.permissionsLoaded && authStore.hasPermission('products.read')" class="account-menu-item account-module-item"
           to="/products" exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/products')">
           <span class="account-menu-icon">
