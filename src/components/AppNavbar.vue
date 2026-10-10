@@ -98,7 +98,7 @@ const logout = async () => {
     <div class="container">
 
       <!-- Brand -->
-      <RouterLink class="navbar-brand-premium" to="/products">
+      <RouterLink class="navbar-brand-premium" to="/dashboard">
         <div class="navbar-logo">
           DK
         </div>
@@ -278,6 +278,27 @@ const logout = async () => {
         <div class="account-section-label">
           GESTIÓN COMERCIAL
         </div>
+
+        <RouterLink class="account-menu-item account-module-item"
+          to="/dashboard" exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/dashboard')">
+          <span class="account-menu-icon">
+            <i class="bi bi-grid-1x2"></i>
+          </span>
+
+          <span class="account-menu-content">
+            <span class="account-menu-title">
+              Dashboard
+            </span>
+
+            <span class="account-menu-description">
+              Resumen general de la actividad del negocio.
+            </span>
+          </span>
+
+          <span class="account-menu-arrow">
+            <i class="bi bi-arrow-up-right"></i>
+          </span>
+        </RouterLink>
 
         <RouterLink v-if="authStore.permissionsLoaded && authStore.hasPermission('users.read')" class="account-menu-item account-module-item"
           to="/users" exact-active-class="router-link-exact-active" @click.prevent="navigateToModule('/users')">

@@ -102,7 +102,7 @@ const changePassword = async () => {
 }
 
 const cancel = () => {
-    router.push('/products')
+    router.push('/dashboard')
 }
 </script>
 

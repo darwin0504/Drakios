@@ -4,16 +4,18 @@ import authRoutes from "@/modules/auth/routes";
 import productRoutes from "@/modules/products/routes";
 import userRoutes from "@/modules/users/routes";
 import rolesRoutes from "@/modules/roles/routes";
+import dashboardRoutes from "@/modules/dashboard/routes";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
-      redirect: "/login",
+      redirect: "/dashboard",
     },
   
     ...authRoutes,
+    ...dashboardRoutes,
     ...userRoutes,
     ...rolesRoutes,
     ...productRoutes,
@@ -29,7 +31,7 @@ router.beforeEach((to, from, next) => {
   }
 
   if ((to.path === "/login" || to.path === "/register") && token) {
-    next("/products");
+    next("/dashboard");
     return;
   }
 

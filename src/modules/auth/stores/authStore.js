@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { authService } from "@/modules/auth/services/authService";
 
+let permissionsLoadPromise = null;
+
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     token: localStorage.getItem("access_token") || null,
@@ -23,14 +25,23 @@ export const useAuthStore = defineStore("auth", {
         return;
       }
 
-      try {
-        const response = await authService.getMyPermissions();
-        this.permissions = Array.isArray(response.data?.permissions)
-          ? response.data.permissions
-          : [];
-      } finally {
-        this.permissionsLoaded = true;
+      if (permissionsLoadPromise) {
+        return permissionsLoadPromise;
       }
+
+      permissionsLoadPromise = (async () => {
+        try {
+          const response = await authService.getMyPermissions();
+          this.permissions = Array.isArray(response.data?.permissions)
+            ? response.data.permissions
+            : [];
+        } finally {
+          this.permissionsLoaded = true;
+          permissionsLoadPromise = null;
+        }
+      })();
+
+      return permissionsLoadPromise;
     },
 
     setSession(token, user) {

@@ -75,7 +75,7 @@ const login = async () => {
       showConfirmButton: false,
     })
 
-    router.push('/products')
+    router.push('/dashboard')
   } catch (error) {
     await Swal.fire({
       icon: 'error',
