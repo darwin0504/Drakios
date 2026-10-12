@@ -16,8 +16,47 @@ const viewName = 'Gestión de productos'
 
 const products = ref([])
 const loading = ref(false)
+const searchQuery = ref('')
+const statusFilter = ref('')
+const availabilityFilter = ref('all')
+const stockLevelFilter = ref('all')
 
 let dataTable = null
+
+const productStockFilter = (settings, _data, dataIndex) => {
+  if (settings.nTable.id !== 'productsTable') return true
+
+  const quantityText = settings.aoData[dataIndex].nTr.querySelector('.stock-badge')?.textContent
+  const quantity = Number(quantityText?.trim())
+
+  if (!Number.isFinite(quantity)) {
+    return availabilityFilter.value === 'all' && stockLevelFilter.value === 'all'
+  }
+
+  if (availabilityFilter.value === 'available' && quantity <= 0) return false
+  if (availabilityFilter.value === 'out' && quantity > 0) return false
+  if (stockLevelFilter.value === 'low' && quantity > 5) return false
+  if (stockLevelFilter.value === 'sufficient' && quantity <= 5) return false
+
+  return true
+}
+
+const applyProductFilters = () => {
+  if (!dataTable) return
+
+  dataTable.search(searchQuery.value.trim())
+  dataTable.column(5)
+    .search(statusFilter.value ? `^${statusFilter.value}$` : '', true, false)
+    .draw()
+}
+
+const clearProductFilters = () => {
+  searchQuery.value = ''
+  statusFilter.value = ''
+  availabilityFilter.value = 'all'
+  stockLevelFilter.value = 'all'
+  applyProductFilters()
+}
 
 const totalProducts = computed(() => products.value.length)
 
@@ -73,10 +112,28 @@ const initDataTable = async () => {
 
   destroyDataTable()
 
+  if (!$.fn.dataTable.ext.search.includes(productStockFilter)) {
+    $.fn.dataTable.ext.search.push(productStockFilter)
+  }
+
   dataTable = $('#productsTable').DataTable({
     responsive: true,
     pageLength: 10,
     ordering: true,
+    layout: {
+      topEnd: null,
+    },
+    columnDefs: [
+      {
+        targets: [0, 6],
+        searchable: false,
+      },
+      {
+        targets: 6,
+        orderable: false,
+        searchable: false,
+      },
+    ],
     language: {
       search: 'Buscar:',
       lengthMenu: 'Mostrar _MENU_ registros',
@@ -95,6 +152,8 @@ const initDataTable = async () => {
       },
     },
   })
+
+  applyProductFilters()
 }
 
 const loadProducts = async () => {
@@ -159,6 +218,11 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   destroyDataTable()
+
+  const filterIndex = $.fn.dataTable.ext.search.indexOf(productStockFilter)
+  if (filterIndex !== -1) {
+    $.fn.dataTable.ext.search.splice(filterIndex, 1)
+  }
 })
 </script>
 
@@ -284,6 +348,68 @@ onBeforeUnmount(() => {
         </div>
 
         <div class="card-body p-4">
+          <div class="user-search-filters mb-4">
+            <div class="user-search-field">
+              <label for="product-search" class="form-label fw-semibold mb-2">
+                Buscar productos
+              </label>
+              <div class="input-group">
+                <span class="input-group-text" aria-hidden="true">
+                  <i class="bi bi-search"></i>
+                </span>
+                <input id="product-search" v-model="searchQuery" type="search" class="form-control premium-input"
+                  placeholder="Producto, precio, descripción, estado o existencias" autocomplete="off"
+                  aria-describedby="product-search-help" @input="applyProductFilters" />
+              </div>
+              <div id="product-search-help" class="form-text">
+                Busca por producto, precio, descripción, estado o cantidad de existencias.
+              </div>
+            </div>
+
+            <div class="user-status-filter">
+              <label for="product-status-filter" class="form-label fw-semibold mb-2">
+                Estado
+              </label>
+              <select id="product-status-filter" v-model="statusFilter" class="form-select premium-input"
+                @change="applyProductFilters">
+                <option value="">Todos los estados</option>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+              </select>
+            </div>
+
+            <div class="user-status-filter">
+              <label for="availabilityFilter" class="form-label fw-semibold mb-2">
+                Disponibilidad
+              </label>
+              <select id="availabilityFilter" v-model="availabilityFilter" class="form-select premium-input"
+                @change="applyProductFilters">
+                <option value="all">Todos</option>
+                <option value="available">Disponibles</option>
+                <option value="out">Agotados</option>
+              </select>
+            </div>
+
+            <div class="user-status-filter">
+              <label for="stockLevelFilter" class="form-label fw-semibold mb-2">
+                Nivel de existencias
+              </label>
+              <select id="stockLevelFilter" v-model="stockLevelFilter" class="form-select premium-input"
+                @change="applyProductFilters">
+                <option value="all">Todos</option>
+                <option value="low">Pocas existencias (5 o menos)</option>
+                <option value="sufficient">Existencias suficientes (más de 5)</option>
+              </select>
+            </div>
+
+            <button type="button" class="btn btn-outline-secondary action-btn user-filter-reset"
+              :disabled="!searchQuery && !statusFilter && availabilityFilter === 'all' && stockLevelFilter === 'all'"
+              @click="clearProductFilters">
+              <i class="bi bi-x-circle me-1" aria-hidden="true"></i>
+              Limpiar filtros
+            </button>
+          </div>
+
           <div v-if="loading" class="alert alert-info border-0 rounded-4" role="status" aria-live="polite">
             Consultando el catálogo de productos...
           </div>
@@ -298,6 +424,7 @@ onBeforeUnmount(() => {
                   <th>Precio</th>
                   <th>Descripción</th>
                   <th>Existencias</th>
+                  <th>Estado</th>
                   <th width="190">Acciones</th>
                 </tr>
               </thead>
@@ -329,6 +456,15 @@ onBeforeUnmount(() => {
                   <td>
                     <span class="stock-badge" :class="Number(product.quantity) <= 5 ? 'stock-low' : 'stock-ok'">
                       {{ product.quantity }}
+                    </span>
+                  </td>
+
+                  <td>
+                    <span class="badge" :class="product.status === 'INACTIVE'
+                      ? 'text-bg-danger'
+                      : 'text-bg-success'
+                      ">
+                      {{ product.status === 'INACTIVE' ? 'Inactivo' : 'Activo' }}
                     </span>
                   </td>
 

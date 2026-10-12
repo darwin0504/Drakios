@@ -15,6 +15,8 @@ const errorMessage = ref('')
 
 const productId = computed(() => Number(route.params.id))
 const quantity = computed(() => Number(product.value?.quantity))
+const productStatus = computed(() => product.value?.status === 'INACTIVE' ? 'Inactivo' : 'Activo')
+const productStatusClass = computed(() => product.value?.status === 'INACTIVE' ? 'is-inactive' : 'is-active')
 const stockStatus = computed(() => {
   if (!Number.isFinite(quantity.value)) return 'No disponible'
   if (quantity.value === 0) return 'Agotado'
@@ -146,6 +148,10 @@ watch(() => route.params.id, loadProduct, { immediate: true })
           </div>
 
           <div class="entity-detail-actions">
+            <span class="entity-detail-status" :class="productStatusClass">
+              <span class="entity-detail-status-dot" aria-hidden="true"></span>
+              {{ productStatus }}
+            </span>
             <span class="entity-detail-status" :class="stockStatusClass">
               <span class="entity-detail-status-dot" aria-hidden="true"></span>
               {{ stockStatus }}
@@ -180,6 +186,15 @@ watch(() => route.params.id, loadProduct, { immediate: true })
               <div class="entity-detail-field entity-detail-field-wide">
                 <dt>Descripción</dt>
                 <dd>{{ product.description || 'No se ha agregado una descripción.' }}</dd>
+              </div>
+              <div class="entity-detail-field">
+                <dt>Estado</dt>
+                <dd>
+                  <span class="entity-detail-status" :class="productStatusClass">
+                    <span class="entity-detail-status-dot" aria-hidden="true"></span>
+                    {{ productStatus }}
+                  </span>
+                </dd>
               </div>
               <div v-if="product.createdAt" class="entity-detail-field">
                 <dt>Fecha de registro</dt>

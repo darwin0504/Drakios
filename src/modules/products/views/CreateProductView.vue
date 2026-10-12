@@ -18,6 +18,7 @@ const name = ref('')
 const price = ref('')
 const description = ref('')
 const quantity = ref('')
+const status = ref('ACTIVE')
 
 const loading = ref(false)
 const errors = ref({})
@@ -92,6 +93,10 @@ const validateForm = () => {
     newErrors.quantity = 'La cantidad debe ser un número entero.'
   }
 
+  if (!status.value) {
+    newErrors.status = 'Selecciona un estado.'
+  }
+
   errors.value = newErrors
   return Object.keys(newErrors).length === 0
 }
@@ -121,6 +126,7 @@ const saveProduct = async () => {
       price: Number(price.value),
       description: description.value.trim() || null,
       quantity: Number(quantity.value),
+      status: status.value,
     }
 
     await productService.create(data)
@@ -225,7 +231,7 @@ const goBack = () => {
                       <input type="text" id="name" v-model="name" class="form-control premium-input"
                         :class="{ 'is-invalid': errors.name }" :aria-invalid="!!errors.name"
                         :aria-describedby="errors.name ? 'product-name-error' : undefined"
-                        placeholder="Mouse inalámbrico" autocomplete="off" maxlength="180" aria-required="true"
+                        placeholder="Mouse inalámbrico" autocomplete="off" maxlength="150" aria-required="true"
                         @input="clearFieldError('name')" />
                     </div>
                     <div v-if="errors.name" id="product-name-error" class="invalid-feedback d-block">
@@ -283,6 +289,22 @@ const goBack = () => {
                       </span>
                       <textarea id="description" v-model="description" class="form-control premium-input" rows="5"
                         placeholder="Describe las características principales del producto"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="status" class="form-label fw-semibold">
+                      Estado <span class="required-mark" aria-hidden="true">*</span>
+                    </label>
+                    <select id="status" v-model="status" class="form-select premium-input"
+                      :class="{ 'is-invalid': errors.status }" :aria-invalid="!!errors.status"
+                      :aria-describedby="errors.status ? 'product-status-error' : undefined"
+                      aria-required="true" @change="clearFieldError('status')">
+                      <option value="ACTIVE">Activo</option>
+                      <option value="INACTIVE">Inactivo</option>
+                    </select>
+                    <div v-if="errors.status" id="product-status-error" class="invalid-feedback d-block">
+                      {{ errors.status }}
                     </div>
                   </div>
                 </div>
@@ -346,13 +368,18 @@ const goBack = () => {
             </div>
 
             <div class="preview-row">
+              <span class="preview-label">Estado</span>
+              <span class="preview-value">{{ status === 'ACTIVE' ? 'Activo' : 'Inactivo' }}</span>
+            </div>
+
+            <div class="preview-row">
               <span class="preview-label">Valor potencial de venta</span>
               <span class="preview-value">{{ formatCurrency(previewTotal) }}</span>
             </div>
 
             <div class="mt-4">
               <p class="text-white-50 mb-0">
-                Al guardar, el artículo quedará disponible en tu catálogo con las existencias registradas.
+                Al guardar, el artículo quedará registrado en tu catálogo con las existencias indicadas.
               </p>
             </div>
           </aside>

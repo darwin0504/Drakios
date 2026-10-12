@@ -21,6 +21,7 @@ const name = ref('')
 const price = ref('')
 const description = ref('')
 const quantity = ref('')
+const status = ref('ACTIVE')
 
 const loading = ref(false)
 const loadingProduct = ref(false)
@@ -53,6 +54,8 @@ const previewQuantity = computed(() => {
 const previewTotal = computed(() => {
   return previewPrice.value * previewQuantity.value
 })
+
+const statusLabel = computed(() => status.value === 'ACTIVE' ? 'Activo' : 'Inactivo')
 
 const formatCurrency = (value) => {
   const numberValue = Number(value)
@@ -96,6 +99,10 @@ const validateForm = () => {
     newErrors.quantity = 'La cantidad debe ser un número entero.'
   }
 
+  if (!status.value) {
+    newErrors.status = 'Selecciona un estado.'
+  }
+
   errors.value = newErrors
   return Object.keys(newErrors).length === 0
 }
@@ -128,6 +135,7 @@ const loadProduct = async () => {
     price.value = product.price
     description.value = product.description || ''
     quantity.value = product.quantity
+    status.value = product.status ?? 'ACTIVE'
   } catch (error) {
     await Swal.fire({
       icon: 'error',
@@ -159,6 +167,7 @@ const updateProduct = async () => {
       price: Number(price.value),
       description: description.value.trim() || null,
       quantity: Number(quantity.value),
+      status: status.value,
     }
 
     await productService.update(productId, data)
@@ -280,7 +289,7 @@ onMounted(() => {
                       <input type="text" id="name" v-model="name" class="form-control premium-input"
                         :class="{ 'is-invalid': errors.name }" :aria-invalid="!!errors.name"
                         :aria-describedby="errors.name ? 'product-name-error' : undefined"
-                        placeholder="Mouse inalámbrico" maxlength="180" aria-required="true"
+                        placeholder="Mouse inalámbrico" maxlength="150" aria-required="true"
                         @input="clearFieldError('name')" />
                     </div>
                     <div v-if="errors.name" id="product-name-error" class="invalid-feedback d-block">
@@ -341,6 +350,22 @@ onMounted(() => {
                         placeholder="Describe las características principales del producto"></textarea>
                     </div>
                   </div>
+
+                  <div class="col-md-6">
+                    <label for="status" class="form-label fw-semibold">
+                      Estado <span class="required-mark" aria-hidden="true">*</span>
+                    </label>
+                    <select id="status" v-model="status" class="form-select premium-input"
+                      :class="{ 'is-invalid': errors.status }" :aria-invalid="!!errors.status"
+                      :aria-describedby="errors.status ? 'product-status-error' : undefined"
+                      aria-required="true" @change="clearFieldError('status')">
+                      <option value="ACTIVE">Activo</option>
+                      <option value="INACTIVE">Inactivo</option>
+                    </select>
+                    <div v-if="errors.status" id="product-status-error" class="invalid-feedback d-block">
+                      {{ errors.status }}
+                    </div>
+                  </div>
                 </div>
 
                 <div class="form-help-box mt-4 mb-4">
@@ -397,6 +422,11 @@ onMounted(() => {
             <div class="preview-row">
               <span class="preview-label">Existencias</span>
               <span class="preview-value">{{ previewQuantity }}</span>
+            </div>
+
+            <div class="preview-row">
+              <span class="preview-label">Estado</span>
+              <span class="preview-value">{{ statusLabel }}</span>
             </div>
 
             <div class="preview-row">
