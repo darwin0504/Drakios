@@ -5,15 +5,18 @@ import AppNavbar from '@/components/AppNavbar.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import { useAuthStore } from '@/modules/auth/stores/authStore'
 import { productService } from '@/modules/products/services/productService'
+import { getProductImageUrl } from '@/modules/products/helpers/productImage'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
 const route = useRoute()
 const authStore = useAuthStore()
 const product = ref(null)
+const productImageLoadFailed = ref(false)
 const loading = ref(true)
 const errorMessage = ref('')
 
 const productId = computed(() => Number(route.params.id))
+const productImageUrl = computed(() => getProductImageUrl(product.value))
 const quantity = computed(() => Number(product.value?.quantity))
 const productStatus = computed(() => product.value?.status === 'INACTIVE' ? 'Inactivo' : 'Activo')
 const productStatusClass = computed(() => product.value?.status === 'INACTIVE' ? 'is-inactive' : 'is-active')
@@ -79,7 +82,12 @@ const loadProduct = async () => {
 
   try {
     const response = await productService.getById(productId.value)
-    product.value = response.data?.product ?? response.data
+    product.value =
+      response.data?.product ??
+      response.data?.data?.product ??
+      response.data?.data ??
+      response.data
+    productImageLoadFailed.value = false
 
     if (!product.value || typeof product.value !== 'object') {
       errorMessage.value = 'No se encontró información para este producto.'
@@ -134,7 +142,12 @@ watch(() => route.params.id, loadProduct, { immediate: true })
       <template v-else-if="product">
         <section class="entity-detail-hero">
           <div class="entity-detail-identity">
-            <div class="entity-detail-avatar" aria-hidden="true">
+            <div v-if="productImageUrl && !productImageLoadFailed" class="entity-detail-avatar product-detail-avatar">
+              <img :src="productImageUrl" :alt="`Imagen de ${product.name || 'producto'}`"
+                class="product-detail-avatar-img"
+                @error="productImageLoadFailed = true" />
+            </div>
+            <div v-else class="entity-detail-avatar" aria-hidden="true">
               <i class="bi bi-box-seam"></i>
             </div>
             <div class="entity-detail-heading">
@@ -167,6 +180,33 @@ watch(() => route.params.id, loadProduct, { immediate: true })
         </section>
 
         <section class="entity-detail-content" aria-label="Información del producto">
+          <article class="entity-detail-card product-detail-image-card">
+            <div class="entity-detail-card-heading">
+              <div class="entity-detail-section-icon">
+                <i class="bi bi-image" aria-hidden="true"></i>
+              </div>
+              <div>
+                <h2>Imagen del producto</h2>
+                <p>Imagen asociada al artículo del catálogo.</p>
+              </div>
+            </div>
+            <div class="product-detail-image-stage">
+              <img v-if="productImageUrl && !productImageLoadFailed" :src="productImageUrl"
+                :alt="`Imagen de ${product.name || 'producto'}`"
+                class="product-detail-image"
+                @error="productImageLoadFailed = true" />
+              <div v-else class="product-detail-image-empty" role="status">
+                <span class="product-detail-image-empty-icon">
+                  <i :class="productImageLoadFailed ? 'bi bi-image-alt' : 'bi bi-box-seam'" aria-hidden="true"></i>
+                </span>
+                <strong>{{ productImageLoadFailed ? 'No se pudo cargar la imagen' : 'Aún no hay una imagen' }}</strong>
+                <span>
+                  {{ productImageLoadFailed ? 'La dirección de la imagen no está disponible en este momento.' : 'Este producto todavía no tiene una imagen asociada.' }}
+                </span>
+              </div>
+            </div>
+          </article>
+
           <article class="entity-detail-card">
             <div class="entity-detail-card-heading">
               <div class="entity-detail-section-icon">

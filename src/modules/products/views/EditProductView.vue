@@ -6,6 +6,8 @@ import AppNavbar from '@/components/AppNavbar.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import { useAuthStore } from '@/modules/auth/stores/authStore'
 import { productService } from '@/modules/products/services/productService'
+import ProductImageUploader from '@/modules/products/components/ProductImageUploader.vue'
+import { getProductImageUrl } from '@/modules/products/helpers/productImage'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
 const router = useRouter()
@@ -23,9 +25,20 @@ const description = ref('')
 const quantity = ref('')
 const status = ref('ACTIVE')
 
+const selectedImage = ref(null)
+const productImageUrl = ref('')
+const imagePreview = ref('')
+const productImageLoadFailed = ref(false)
+const imageError = ref('')
+
 const loading = ref(false)
 const loadingProduct = ref(false)
 const errors = ref({})
+
+const displayedImage = computed(() => {
+  if (imagePreview.value) return imagePreview.value
+  return productImageLoadFailed.value ? '' : productImageUrl.value
+})
 
 const previewName = computed(() => {
   return name.value.trim() || 'Producto seleccionado'
@@ -129,13 +142,19 @@ const loadProduct = async () => {
 
   try {
     const response = await productService.getById(productId)
-    const product = response.data
+    const product =
+      response.data?.product ??
+      response.data?.data?.product ??
+      response.data?.data ??
+      response.data
 
     name.value = product.name
     price.value = product.price
     description.value = product.description || ''
     quantity.value = product.quantity
     status.value = product.status ?? 'ACTIVE'
+
+    productImageUrl.value = getProductImageUrl(product)
   } catch (error) {
     await Swal.fire({
       icon: 'error',
@@ -159,6 +178,15 @@ const updateProduct = async () => {
     return
   }
 
+  if (imageError.value) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Revisa la imagen',
+      text: imageError.value,
+    })
+    return
+  }
+
   loading.value = true
 
   try {
@@ -172,10 +200,25 @@ const updateProduct = async () => {
 
     await productService.update(productId, data)
 
+    if (selectedImage.value) {
+      try {
+        await productService.uploadImage(productId, selectedImage.value)
+      } catch (uploadError) {
+        await Swal.fire({
+          icon: 'warning',
+          title: 'Datos actualizados sin imagen',
+          text: `Los datos del producto se actualizaron, pero la imagen no pudo subirse. ${getErrorMessage(uploadError)}`,
+        })
+        return
+      }
+    }
+
     await Swal.fire({
       icon: 'success',
       title: 'Producto actualizado',
-      text: 'El producto se actualizó correctamente.',
+      text: selectedImage.value
+        ? 'El producto y su imagen se actualizaron correctamente.'
+        : 'El producto se actualizó correctamente.',
       timer: 1400,
       showConfirmButton: false,
     })
@@ -199,6 +242,7 @@ const goBack = () => {
 onMounted(() => {
   loadProduct()
 })
+
 </script>
 
 <template>
@@ -351,6 +395,23 @@ onMounted(() => {
                     </div>
                   </div>
 
+                  <div class="col-md-12">
+                    <div class="product-image-field-heading">
+                      <label class="form-label fw-semibold mb-1">Imagen del producto</label>
+                      <span class="product-image-optional">Opcional</span>
+                    </div>
+                    <p class="product-image-field-description">
+                      {{ productImageUrl ? 'La imagen actual se conserva si no seleccionas otra.' : 'Puedes agregar una imagen al artículo.' }}
+                    </p>
+                    <ProductImageUploader
+                      v-model="selectedImage"
+                      :current-image-url="productImageUrl"
+                      :disabled="loading"
+                      @update:error="imageError = $event"
+                      @update:preview="imagePreview = $event"
+                    />
+                  </div>
+
                   <div class="col-md-6">
                     <label for="status" class="form-label fw-semibold">
                       Estado <span class="required-mark" aria-hidden="true">*</span>
@@ -406,6 +467,18 @@ onMounted(() => {
                 <small class="text-white-50">
                   Producto ID: {{ productId }}
                 </small>
+              </div>
+            </div>
+
+            <div class="mb-4 text-center">
+              <div v-if="displayedImage" class="product-preview-image-stage">
+                <img :src="displayedImage" :alt="`Vista previa de ${previewName}`"
+                  class="product-preview-image"
+                  @error="productImageLoadFailed = true" />
+              </div>
+              <div v-else class="product-preview-image-empty">
+                <i class="bi bi-image fs-1 text-white-50"></i>
+                <small class="text-white-50">Sin imagen disponible</small>
               </div>
             </div>
 

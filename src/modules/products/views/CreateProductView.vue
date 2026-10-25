@@ -6,6 +6,7 @@ import AppNavbar from '@/components/AppNavbar.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import { useAuthStore } from '@/modules/auth/stores/authStore'
 import { productService } from '@/modules/products/services/productService'
+import ProductImageUploader from '@/modules/products/components/ProductImageUploader.vue'
 import { getErrorMessage } from '@/helpers/errorHelper'
 
 const router = useRouter()
@@ -20,6 +21,10 @@ const description = ref('')
 const quantity = ref('')
 const status = ref('ACTIVE')
 
+const selectedImage = ref(null)
+const imagePreview = ref('')
+const imageError = ref('')
+
 const loading = ref(false)
 const errors = ref({})
 
@@ -29,22 +34,12 @@ const previewName = computed(() => {
 
 const previewPrice = computed(() => {
   const value = Number(price.value)
-
-  if (Number.isNaN(value)) {
-    return 0
-  }
-
-  return value
+  return Number.isFinite(value) ? value : 0
 })
 
 const previewQuantity = computed(() => {
   const value = Number(quantity.value)
-
-  if (Number.isNaN(value)) {
-    return 0
-  }
-
-  return value
+  return Number.isFinite(value) ? value : 0
 })
 
 const previewTotal = computed(() => {
@@ -54,21 +49,12 @@ const previewTotal = computed(() => {
 const formatCurrency = (value) => {
   const numberValue = Number(value)
 
-  if (Number.isNaN(numberValue)) {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(0)
-  }
-
   return new Intl.NumberFormat('es-CO', {
     style: 'currency',
     currency: 'COP',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(numberValue)
+  }).format(Number.isFinite(numberValue) ? numberValue : 0)
 }
 
 const validateForm = () => {
@@ -82,12 +68,22 @@ const validateForm = () => {
   }
 
   const productPrice = Number(price.value)
-  if (price.value === '' || !Number.isFinite(productPrice) || productPrice < 0) {
+
+  if (
+    price.value === '' ||
+    !Number.isFinite(productPrice) ||
+    productPrice < 0
+  ) {
     newErrors.price = 'Ingresa un precio válido mayor o igual a 0.'
   }
 
   const productQuantity = Number(quantity.value)
-  if (quantity.value === '' || !Number.isFinite(productQuantity) || productQuantity < 0) {
+
+  if (
+    quantity.value === '' ||
+    !Number.isFinite(productQuantity) ||
+    productQuantity < 0
+  ) {
     newErrors.quantity = 'Ingresa una cantidad válida mayor o igual a 0.'
   } else if (!Number.isInteger(productQuantity)) {
     newErrors.quantity = 'La cantidad debe ser un número entero.'
@@ -103,8 +99,21 @@ const validateForm = () => {
 
 const clearFieldError = (field) => {
   if (errors.value[field]) {
-    delete errors.value[field]
+    const updatedErrors = { ...errors.value }
+    delete updatedErrors[field]
+    errors.value = updatedErrors
   }
+}
+
+const getCreatedProductId = (response) => {
+  const data = response?.data
+
+  return (
+    data?.id ??
+    data?.product?.id ??
+    data?.data?.id ??
+    null
+  )
 }
 
 const saveProduct = async () => {
@@ -118,7 +127,19 @@ const saveProduct = async () => {
     return
   }
 
+  if (imageError.value) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Revisa la imagen',
+      text: imageError.value,
+    })
+
+    return
+  }
+
   loading.value = true
+
+  let productCreated = false
 
   try {
     const data = {
@@ -129,13 +150,51 @@ const saveProduct = async () => {
       status: status.value,
     }
 
-    await productService.create(data)
+    const createResponse = await productService.create(data)
+    productCreated = true
+
+    if (selectedImage.value) {
+      const productId = getCreatedProductId(createResponse)
+
+      if (!productId) {
+        await Swal.fire({
+          icon: 'warning',
+          title: 'Producto creado',
+          text:
+            'El producto se registró, pero no se pudo identificar su ID para subir la imagen. Puedes cargarla desde la edición del producto.',
+          confirmButtonText: 'Ir a productos',
+        })
+
+        router.push('/products')
+        return
+      }
+
+      try {
+        await productService.uploadImage(
+          productId,
+          selectedImage.value,
+        )
+      } catch (uploadError) {
+        await Swal.fire({
+          icon: 'warning',
+          title: 'Producto creado sin imagen',
+          text:
+            `El producto se registró correctamente, pero la imagen no pudo subirse. ${getErrorMessage(uploadError)}`,
+          confirmButtonText: 'Ir a productos',
+        })
+
+        router.push('/products')
+        return
+      }
+    }
 
     await Swal.fire({
       icon: 'success',
       title: 'Producto creado',
-      text: 'El producto se registró correctamente.',
-      timer: 1400,
+      text: selectedImage.value
+        ? 'El producto y su imagen se registraron correctamente.'
+        : 'El producto se registró correctamente.',
+      timer: 1600,
       showConfirmButton: false,
     })
 
@@ -143,7 +202,9 @@ const saveProduct = async () => {
   } catch (error) {
     Swal.fire({
       icon: 'error',
-      title: 'No fue posible guardar el producto',
+      title: productCreated
+        ? 'Ocurrió un problema'
+        : 'No fue posible guardar el producto',
       text: getErrorMessage(error),
     })
   } finally {
@@ -154,6 +215,7 @@ const saveProduct = async () => {
 const goBack = () => {
   router.push('/products')
 }
+
 </script>
 
 <template>
@@ -193,7 +255,9 @@ const goBack = () => {
             </h1>
 
             <p class="text-white-50 mb-0">
-              Registra los datos comerciales y las existencias iniciales del artículo para incorporarlo a tu catálogo.
+              Registra los datos comerciales, la imagen y las
+              existencias iniciales del artículo para incorporarlo
+              a tu catálogo.
             </p>
           </div>
         </div>
@@ -212,7 +276,9 @@ const goBack = () => {
               </h4>
 
               <p class="form-section-subtitle mb-0">
-                Los campos marcados con <span class="required-mark" aria-hidden="true">*</span> son obligatorios.
+                Los campos marcados con
+                <span class="required-mark" aria-hidden="true">*</span>
+                son obligatorios.
               </p>
             </div>
 
@@ -221,14 +287,15 @@ const goBack = () => {
                 <div class="row g-4">
                   <div class="col-md-6">
                     <label for="name" class="form-label fw-semibold">
-                      Nombre del producto <span class="required-mark" aria-hidden="true">*</span>
+                      Nombre del producto
+                      <span class="required-mark" aria-hidden="true">*</span>
                     </label>
 
                     <div class="input-group has-validation">
                       <span class="input-group-text" :class="{ 'is-invalid': errors.name }">
                         <i class="bi bi-box-seam"></i>
                       </span>
-                      <input type="text" id="name" v-model="name" class="form-control premium-input"
+                      <input id="name" v-model="name" type="text" class="form-control premium-input"
                         :class="{ 'is-invalid': errors.name }" :aria-invalid="!!errors.name"
                         :aria-describedby="errors.name ? 'product-name-error' : undefined"
                         placeholder="Mouse inalámbrico" autocomplete="off" maxlength="150" aria-required="true"
@@ -241,14 +308,15 @@ const goBack = () => {
 
                   <div class="col-md-3">
                     <label for="price" class="form-label fw-semibold">
-                      Precio <span class="required-mark" aria-hidden="true">*</span>
+                      Precio
+                      <span class="required-mark" aria-hidden="true">*</span>
                     </label>
 
                     <div class="input-group has-validation">
                       <span class="input-group-text" :class="{ 'is-invalid': errors.price }">
                         <i class="bi bi-currency-dollar"></i>
                       </span>
-                      <input type="number" id="price" v-model="price" class="form-control premium-input"
+                      <input id="price" v-model="price" type="number" class="form-control premium-input"
                         :class="{ 'is-invalid': errors.price }" :aria-invalid="!!errors.price"
                         :aria-describedby="errors.price ? 'product-price-error' : undefined" min="0" step="0.01"
                         placeholder="59.90" aria-required="true" @input="clearFieldError('price')" />
@@ -260,14 +328,15 @@ const goBack = () => {
 
                   <div class="col-md-3">
                     <label for="quantity" class="form-label fw-semibold">
-                      Existencias iniciales <span class="required-mark" aria-hidden="true">*</span>
+                      Existencias iniciales
+                      <span class="required-mark" aria-hidden="true">*</span>
                     </label>
 
                     <div class="input-group has-validation">
                       <span class="input-group-text" :class="{ 'is-invalid': errors.quantity }">
                         <i class="bi bi-stack"></i>
                       </span>
-                      <input type="number" id="quantity" v-model="quantity" class="form-control premium-input"
+                      <input id="quantity" v-model="quantity" type="number" class="form-control premium-input"
                         :class="{ 'is-invalid': errors.quantity }" :aria-invalid="!!errors.quantity"
                         :aria-describedby="errors.quantity ? 'product-quantity-error' : undefined" min="0" step="1"
                         placeholder="20" aria-required="true" @input="clearFieldError('quantity')" />
@@ -277,7 +346,7 @@ const goBack = () => {
                     </div>
                   </div>
 
-                  <div class="col-md-12">
+                  <div class="col-12">
                     <label for="description" class="form-label fw-semibold">
                       Descripción
                       <small class="text-muted fw-normal">(opcional)</small>
@@ -292,14 +361,31 @@ const goBack = () => {
                     </div>
                   </div>
 
+                  <div class="col-12">
+                    <div class="product-image-field-heading">
+                      <label class="form-label fw-semibold mb-1">Imagen del producto</label>
+                      <span class="product-image-optional">Opcional</span>
+                    </div>
+                    <p class="product-image-field-description">
+                      Una imagen clara ayuda a identificar el artículo en tu catálogo.
+                    </p>
+                    <ProductImageUploader
+                      v-model="selectedImage"
+                      @update:error="imageError = $event"
+                      @update:preview="imagePreview = $event"
+                      :disabled="loading"
+                    />
+                  </div>
+
                   <div class="col-md-6">
                     <label for="status" class="form-label fw-semibold">
-                      Estado <span class="required-mark" aria-hidden="true">*</span>
+                      Estado
+                      <span class="required-mark" aria-hidden="true">*</span>
                     </label>
                     <select id="status" v-model="status" class="form-select premium-input"
                       :class="{ 'is-invalid': errors.status }" :aria-invalid="!!errors.status"
-                      :aria-describedby="errors.status ? 'product-status-error' : undefined"
-                      aria-required="true" @change="clearFieldError('status')">
+                      :aria-describedby="errors.status ? 'product-status-error' : undefined" aria-required="true"
+                      @change="clearFieldError('status')">
                       <option value="ACTIVE">Activo</option>
                       <option value="INACTIVE">Inactivo</option>
                     </select>
@@ -309,9 +395,9 @@ const goBack = () => {
                   </div>
                 </div>
 
-                <div class="form-help-box mb-4">
-                  Registra la cantidad en unidades enteras y verifica que el precio corresponda al valor de venta del
-                  producto.
+                <div class="form-help-box mb-4 mt-4">
+                  Registra la cantidad en unidades enteras y verifica
+                  que el precio corresponda al valor de venta del producto.
                 </div>
 
                 <div class="d-flex flex-column flex-md-row justify-content-end gap-2">
@@ -338,17 +424,23 @@ const goBack = () => {
           <aside class="product-preview-card">
             <div class="d-flex align-items-center gap-3 mb-4">
               <div class="preview-icon">
-                +
+                <i class="bi bi-plus-lg"></i>
               </div>
 
               <div>
-                <h5 class="fw-bold mb-1">
-                  Vista rápida
-                </h5>
+                <h5 class="fw-bold mb-1">Vista rápida</h5>
+                <small class="text-white-50">Resumen del artículo</small>
+              </div>
+            </div>
 
-                <small class="text-white-50">
-                  Resumen del artículo
-                </small>
+            <div class="mb-4 text-center">
+              <div v-if="imagePreview" class="product-preview-image-stage">
+                <img :src="imagePreview" :alt="`Vista previa de ${previewName}`" class="product-preview-image" />
+              </div>
+
+              <div v-else class="product-preview-image-empty">
+                <i class="bi bi-image fs-1 text-white-50"></i>
+                <small class="text-white-50">Sin imagen seleccionada</small>
               </div>
             </div>
 
@@ -359,7 +451,9 @@ const goBack = () => {
 
             <div class="preview-row">
               <span class="preview-label">Precio unitario</span>
-              <span class="preview-value">{{ formatCurrency(previewPrice) }}</span>
+              <span class="preview-value">
+                {{ formatCurrency(previewPrice) }}
+              </span>
             </div>
 
             <div class="preview-row">
@@ -369,17 +463,22 @@ const goBack = () => {
 
             <div class="preview-row">
               <span class="preview-label">Estado</span>
-              <span class="preview-value">{{ status === 'ACTIVE' ? 'Activo' : 'Inactivo' }}</span>
+              <span class="preview-value">
+                {{ status === 'ACTIVE' ? 'Activo' : 'Inactivo' }}
+              </span>
             </div>
 
             <div class="preview-row">
               <span class="preview-label">Valor potencial de venta</span>
-              <span class="preview-value">{{ formatCurrency(previewTotal) }}</span>
+              <span class="preview-value">
+                {{ formatCurrency(previewTotal) }}
+              </span>
             </div>
 
             <div class="mt-4">
               <p class="text-white-50 mb-0">
-                Al guardar, el artículo quedará registrado en tu catálogo con las existencias indicadas.
+                Al guardar, el artículo quedará registrado en tu catálogo
+                con las existencias y la imagen seleccionadas.
               </p>
             </div>
           </aside>

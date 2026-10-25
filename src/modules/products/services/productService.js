@@ -20,4 +20,15 @@ export const productService = {
   delete(id) {
     return api.delete(`/products/${id}`);
   },
+
+  uploadImage(id, imageFile) {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+
+    return api.post(`/products/image/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
 };
